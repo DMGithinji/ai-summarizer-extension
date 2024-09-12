@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Reframe",
+  "version": "1.0",
+  "description": "Website AI summarizer that uses your AI subscription",
+  "permissions": [
+    "activeTab",
+    "clipboardWrite",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://claude.ai/*"
+  ],
+  "action": {
+    "default_icon": {
+      "48": "icon48.png"
+    }
+  },
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "css": ["styles.css"],
+    "js": ["content.js"]
+  }]
+}
