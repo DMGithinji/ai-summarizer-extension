@@ -21,7 +21,8 @@
       "exclude_matches": [
         "https://claude.ai/*",
         "https://chatgpt.com/*",
-        "https://gemini.google.com/*"
+        "https://gemini.google.com/*",
+        "https://www.youtube.com/*"
       ],
       "css": ["styles.css"],
       "js": ["content.js"]

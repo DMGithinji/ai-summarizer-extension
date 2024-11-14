@@ -35,18 +35,18 @@
     <div class="prompt-section">
       <textarea id="promptTemplate" rows="12" placeholder="Enter your default prompt template..."></textarea>
 
-      <h3>Prompt Inspirations:</h3>
+      <h3>More prompt examples you can use:</h3>
       <div class="variables-help">
         <ul>
-          <li>Summarize the following content in 5-10 bullet points with timestamp if it's transcript.</li>
-          <li>Extract the gist of the following.</li>
-          <li>Summarize the following text to me like I am 12 years old.</li>
+          <li>Summarize the following content in 5-10 bullet points: {{content}}</li>
+          <li>What is the gist of the following text: {{content}}</li>
+          <li>Summarize the following text to me like I am 12 years old. Text: {{content}}</li>
         </ul>
       </div>
     </div>
 
     <div class="actions">
-      <button id="save" class="save-button" disabled>Save Settings</button>
+      <button id="save" class="save-button" disabled>Save Changes</button>
       <div id="status" class="status"></div>
     </div>
   </div>

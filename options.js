@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     aiUrl: ''
   };
 
+  const defaultAI = "https://chatgpt.com?summarize-extension";
   const defaultPrompt = `Please provide a summary of the following content:
 
 1. First, give a concise one-sentence summary that captures the core message/theme
@@ -12,14 +13,15 @@ document.addEventListener('DOMContentLoaded', function() {
 4. Include any notable quotes or statistics
 5. End with a brief takeaway
 
-Content to analyze:
+Content to summarize:
 {{content}}`;
 
   // Load saved settings
   function loadSettings() {
+    defaultAI
     chrome.storage.sync.get({
       promptTemplate: defaultPrompt,
-      aiUrl: 'https://claude.ai/chat' // Default AI service
+      aiUrl: defaultAI,
     }, function(items) {
       // Store current settings
       currentSettings = {
