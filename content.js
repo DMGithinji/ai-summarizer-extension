@@ -107,10 +107,7 @@ async function captureText() {
       capturedText
     );
 
-    // Copy to clipboard
     await navigator.clipboard.writeText(copiedText);
-
-    console.log({ settings });
 
     // Extract base URL for service name
     const serviceUrl = new URL(settings.aiUrl);
