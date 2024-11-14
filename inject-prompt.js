@@ -1,11 +1,8 @@
 async function pasteToInput() {
-  console.log("Pasting...");
 
   try {
     // Get clipboard content
     const clipboardText = await navigator.clipboard.readText();
-    console.log("Got clipboard text");
-
     // Try different selectors based on the platform
     const editor =
       document.querySelector('div[contenteditable="true"].ProseMirror') ||  // Claude/ChatGPT
@@ -14,8 +11,6 @@ async function pasteToInput() {
     if (!editor) {
       throw new Error("No compatible editor found");
     }
-
-    console.log("Found editor:", editor);
 
     // Handle Gemini's editor differently
     if (editor.classList.contains('ql-editor')) {
@@ -51,7 +46,6 @@ async function pasteToInput() {
       }));
     }
 
-    console.log("Paste completed");
   } catch (error) {
     console.error("Paste error:", error);
   }
