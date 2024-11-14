@@ -1,25 +1,42 @@
 {
   "manifest_version": 3,
-  "name": "Reframe",
+  "name": "Free Website AI Summarizer",
   "version": "1.0",
-  "description": "Website AI summarizer that uses your AI subscription",
-  "permissions": [
-    "activeTab",
-    "clipboardWrite",
-    "scripting",
-    "storage"
-  ],
+  "description": "A FREE Website AI summarizer that uses your own AI subscription",
+  "permissions": ["activeTab", "clipboardRead", "clipboardWrite", "scripting", "storage"],
   "host_permissions": [
-    "https://claude.ai/*"
+    "https://claude.ai/*",
+    "https://chatgpt.com/*",
+    "https://gemini.google.com/*"
   ],
+  "options_page": "options.html",
   "action": {
     "default_icon": {
       "48": "icon48.png"
     }
   },
-  "content_scripts": [{
-    "matches": ["<all_urls>"],
-    "css": ["styles.css"],
-    "js": ["content.js"]
-  }]
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "exclude_matches": [
+        "https://claude.ai/*",
+        "https://chatgpt.com/*",
+        "https://gemini.google.com/*"
+      ],
+      "css": ["styles.css"],
+      "js": ["content.js"]
+    },
+    {
+      "matches": [
+        "https://claude.ai/*",
+        "https://chatgpt.com/*",
+        "https://gemini.google.com/*"
+      ],
+      "js": ["inject-prompt.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
 }
