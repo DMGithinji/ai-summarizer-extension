@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 4. Include any notable quotes or statistics
 5. End with a brief takeaway
 
-Content to summarize:
+Content to summarize: ➡️➡️➡️
 {{content}}`;
 
   // Load saved settings

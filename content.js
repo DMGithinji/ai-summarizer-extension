@@ -107,6 +107,7 @@ async function captureText() {
       capturedText
     );
 
+    await navigator.clipboard.writeText('');
     await navigator.clipboard.writeText(copiedText);
 
     // Extract base URL for service name
