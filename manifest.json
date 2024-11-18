@@ -22,7 +22,9 @@
         "https://claude.ai/*",
         "https://chatgpt.com/*",
         "https://gemini.google.com/*",
-        "https://www.youtube.com/*"
+        "https://www.youtube.com/*",
+        "https://*.google.com/*",
+        "https://youtube.com/*"
       ],
       "css": ["styles.css"],
       "js": ["content.js"]
