@@ -3,6 +3,8 @@ async function pasteToInput() {
   try {
     // Get clipboard content
     const clipboardText = await navigator.clipboard.readText();
+    await navigator.clipboard.writeText('');
+
     // Try different selectors based on the platform
     const editor =
       document.querySelector('div[contenteditable="true"].ProseMirror') ||  // Claude/ChatGPT
@@ -55,6 +57,6 @@ async function pasteToInput() {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'pasteText') {
     console.log("Got paste message");
-    setTimeout(pasteToInput, 2000)
+    setTimeout(pasteToInput, 500)
   }
 });
