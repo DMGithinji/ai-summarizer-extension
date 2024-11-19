@@ -69,38 +69,64 @@ async function captureText() {
     });
 
     // Select all relevant elements
-    const elements = document.querySelectorAll("h1, h2, h3, h4, h5, h6, p, li");
+    const excludedParents = 'nav, aside, header, footer, button, script, style';
+    const elementSelectors = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'div:not(:empty)'];
+
+    // Combine to get specific elements that aren't inside excluded parents
+    const selector = elementSelectors
+      .map(tag => `${tag}:not(${excludedParents}):not(${excludedParents} *)`)
+      .join(', ');
+
+    const elements = document.querySelectorAll(selector);
+    console.log({elements})
 
     // Extract and format text content
     let capturedText = "";
-    elements.forEach((element) => {
-      const text = element.textContent.trim();
+    for (let element of elements) {
+      if (
+            element.offsetHeight === 0 ||
+            element.closest(excludedParents) ||  // This check works better!
+            !element.textContent.trim()
+        ) {
+            continue;
+        }
+
+      const parent = element.parentElement;
+      if (parent && (
+          parent.matches("h1, h2, h3, h4, h5, h6, div, span, p, li") ||
+          parent.closest("h1, h2, h3, h4, h5, h6, div, span, p, li")
+      )) {
+        continue;
+      }
+
+      let text = element.innerText.trim();
+      text = text.replace(/<[^>]+>/g, '').trim();
       if (text) {
         const tag = element.tagName.toLowerCase();
         // Add appropriate formatting based on tag
         switch (tag) {
           case "h1":
-            capturedText += `# ${text}\n\n`;
+            capturedText += `# ${text}\n`;
             break;
           case "h2":
-            capturedText += `## ${text}\n\n`;
+            capturedText += `## ${text}\n`;
             break;
           case "h3":
-            capturedText += `### ${text}\n\n`;
+            capturedText += `### ${text}\n`;
             break;
           case "h4":
           case "h5":
           case "h6":
-            capturedText += `#### ${text}\n\n`;
+            capturedText += `#### ${text}\n`;
             break;
           case "li":
             capturedText += `• ${text}\n`;
             break;
           default:
-            capturedText += `${text}\n\n`;
+            capturedText += `${text}\n`;
         }
       }
-    });
+    };
 
     const copiedText = await processTemplate(
       settings.promptTemplate,
