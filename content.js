@@ -70,7 +70,7 @@ async function captureText() {
 
     // Select all relevant elements
     const excludedParents = 'nav, aside, header, footer, button, script, style';
-    const elementSelectors = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'div:not(:empty)'];
+    const elementSelectors = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'td', 'div:not(:empty)'];
 
     // Combine to get specific elements that aren't inside excluded parents
     const selector = elementSelectors
