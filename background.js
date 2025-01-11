@@ -16,7 +16,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       const domain = url.hostname;
       const isValidUrl =
         validUrls[domain] === url.pathname &&
-        url.searchParams.has("summarize-extension");
+          url.searchParams.has("summarize-extension");
       if (isValidUrl) {
         chrome.tabs
           .sendMessage(tabId, {
