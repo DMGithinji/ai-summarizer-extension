@@ -14,12 +14,40 @@ async function pasteToInput() {
       throw new Error("No compatible editor found");
     }
 
+
     // Handle Gemini's editor differently
     if (editor.classList.contains('ql-editor')) {
       editor.textContent = clipboardText;
       // Trigger Quill's specific events
       editor.dispatchEvent(new InputEvent('input', { bubbles: true }));
       editor.dispatchEvent(new Event('change', { bubbles: true }));
+
+      // Specific handling for Gemini
+      setTimeout(() => {
+        // Try the send button first
+        const sendButton = document.querySelector('button[data-testid="send-button"]');
+        if (sendButton && !sendButton.disabled) {
+          sendButton.click();
+          return;
+        }
+
+        // Fallback to keyboard events if button not found
+        const enterEvent = new KeyboardEvent('keydown', {
+          key: 'Enter',
+          code: 'Enter',
+          keyCode: 13,
+          which: 13,
+          bubbles: true,
+          cancelable: true,
+          composed: true,
+          shiftKey: false,
+          metaKey: false,
+          ctrlKey: false
+        });
+
+        editor.dispatchEvent(enterEvent);
+        document.dispatchEvent(enterEvent);
+      }, 750);
     }
     // Handle Claude/ChatGPT editor
     else {
@@ -46,6 +74,25 @@ async function pasteToInput() {
         bubbles: true,
         cancelable: true
       }));
+
+      // Submit using Enter key press after a short delay
+      setTimeout(() => {
+        const enterEvent = new KeyboardEvent('keydown', {
+          key: 'Enter',
+          code: 'Enter',
+          keyCode: 13,
+          which: 13,
+          bubbles: true,
+          cancelable: true,
+          composed: true,
+          shiftKey: false,
+          metaKey: false,
+          ctrlKey: false
+        });
+
+        editor.dispatchEvent(enterEvent);
+        document.dispatchEvent(enterEvent);
+      }, 750);
     }
 
   } catch (error) {
