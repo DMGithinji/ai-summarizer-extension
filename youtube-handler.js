@@ -21,109 +21,78 @@ async function processTemplate(template, content) {
   });
 }
 
-async function captureText() {
+// Function to extract video ID from YouTube URL
+function getYoutubeVideoId(url) {
+  const urlObj = new URL(url);
+  return urlObj.searchParams.get('v');
+}
+
+// Function to fetch transcript
+async function fetchTranscript(videoId) {
   try {
-    // Get the configured AI service URL
+    const response = await fetch(`http://127.0.0.1:5000/get_transcript_fast?video_id=${videoId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch transcript');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching transcript:', error);
+    throw error;
+  }
+}
+
+// Function to format transcript
+function formatTranscript(data) {
+  const formattedTranscript = data.data.transcript.map(entry => `${entry.text}`).join('\n');
+  return formattedTranscript
+}
+
+async function handleYoutubeCapture() {
+  try {
+    // Get video ID
+    const videoId = getYoutubeVideoId(window.location.href);
+    if (!videoId) {
+      throw new Error('Could not find video ID');
+    }
+
+    // Get video title
+    const videoTitle = document.querySelector('h1.ytd-video-primary-info-renderer')?.textContent || 'Untitled Video';
+
+    // Fetch transcript
+    const transcript = await fetchTranscript(videoId);
+    const formattedTranscript = formatTranscript(transcript);
+
+    // Get settings from storage
     const settings = await chrome.storage.sync.get({
       aiUrl: defaultAI,
       promptTemplate: defaultPrompt,
     });
 
-    // Select all relevant elements
-    const excludedParents = 'nav, aside, header, footer, button, script, style';
-    const elementSelectors = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'td', 'div:not(:empty)'];
-
-    // Combine to get specific elements that aren't inside excluded parents
-    const selector = elementSelectors
-      .map(tag => `${tag}:not(${excludedParents}):not(${excludedParents} *)`)
-      .join(', ');
-
-    const elements = document.querySelectorAll(selector);
-    console.log({elements})
-
-    // Extract and format text content
-    let capturedText = "";
-    for (let element of elements) {
-      if (
-            element.offsetHeight === 0 ||
-            element.closest(excludedParents) ||  // This check works better!
-            !element.textContent.trim()
-        ) {
-            continue;
-        }
-
-      const parent = element.parentElement;
-      if (parent && (
-          parent.matches("h1, h2, h3, h4, h5, h6, div, span, p, li") ||
-          parent.closest("h1, h2, h3, h4, h5, h6, div, span, p, li")
-      )) {
-        continue;
-      }
-
-      let text = element.innerText.trim();
-      text = text.replace(/<[^>]+>/g, '').trim();
-      if (text) {
-        const tag = element.tagName.toLowerCase();
-        // Add appropriate formatting based on tag
-        switch (tag) {
-          case "h1":
-            capturedText += `# ${text}\n`;
-            break;
-          case "h2":
-            capturedText += `## ${text}\n`;
-            break;
-          case "h3":
-            capturedText += `### ${text}\n`;
-            break;
-          case "h4":
-          case "h5":
-          case "h6":
-            capturedText += `#### ${text}\n`;
-            break;
-          case "li":
-            capturedText += `• ${text}\n`;
-            break;
-          default:
-            capturedText += `${text}\n`;
-        }
-      }
-    };
-
-    const copiedText = await processTemplate(
+    // Process template with video context
+    const processedText = await processTemplate(
       settings.promptTemplate,
-      capturedText
+      `Video Title: ${videoTitle}\n\nTranscript:\n${formattedTranscript}`
     );
 
+    // Copy to clipboard
     await navigator.clipboard.writeText('');
-    await navigator.clipboard.writeText(copiedText);
+    await navigator.clipboard.writeText(processedText);
 
-    // Extract base URL for service name
-    const serviceUrl = new URL(settings.aiUrl);
-    let serviceName = "ChatGPT";
-    if (serviceUrl.hostname.includes("claude")) {
-      serviceName = "Claude";
-    } else if (serviceUrl.hostname.includes("chatgpt")) {
-      serviceName = "ChatGPT";
-    } else if (serviceUrl.hostname.includes("gemini")) {
-      serviceName = "Gemini";
-    }
-
-    // Ensure the summarize-extension parameter is present
+    // Open AI service
     const aiUrl = settings.aiUrl.includes("summarize-extension")
       ? settings.aiUrl
-      : `${settings.aiUrl}${settings.aiUrl.includes("?") ? "&" : "?"
-      }summarize-extension`;
+      : `${settings.aiUrl}${settings.aiUrl.includes("?") ? "&" : "?"}summarize-extension`;
 
-    // Open the configured AI service in a new tab
     window.open(aiUrl, "_blank");
-  } catch (err) {
-    console.error("Failed to capture text: ", err);
-    showNotification("Failed to capture text. Please try again.", "error");
+
+  } catch (error) {
+    console.error('Failed to handle YouTube capture:', error);
+    alert('Failed to get video transcript. Please try again.');
   }
 }
 
-
-function createFloatingButton() {
+// Initialize capture button
+function createYoutubeCaptureButton() {
   const container = document.createElement("div");
   container.style.position = "fixed";
   container.style.bottom = "20px";
@@ -145,15 +114,14 @@ function createFloatingButton() {
     <button class="close-button" title="Remove button">×</button>
   `;
 
-  // Add tooltip to main button
-  button.setAttribute("title", "Summarize with AI");
-  button.addEventListener("click", captureText);
 
-  // Add click handler for close button
+  button.setAttribute("title", "Summarize Video with AI");
+  button.addEventListener("click", handleYoutubeCapture);
+
   const closeButton = button.querySelector(".close-button");
   closeButton.addEventListener("click", (e) => {
-    e.stopPropagation(); // Prevent triggering the main button's click event
-    container.remove(); // Remove the entire container
+    e.stopPropagation();
+    container.remove();
   });
 
   container.appendChild(button);
@@ -171,5 +139,5 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Initialize the floating button
-createFloatingButton();
+// Initialize on page load
+createYoutubeCaptureButton();
