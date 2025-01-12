@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Free Website AI Summarizer",
-  "version": "1.0",
-  "description": "A FREE Website AI summarizer that uses your own AI subscription",
+  "name": "Free Youtube & Web AI Summarizer",
+  "version": "2.0",
+  "description": "Instantly summarize any webpage or YouTube video using your existing AI accounts (ChatGPT, Claude, or Gemini). Save time with one-click summaries - no additional subscription required.",
   "permissions": ["activeTab", "clipboardRead", "clipboardWrite", "scripting", "storage"],
   "host_permissions": [
     "https://claude.ai/*",
@@ -11,6 +11,9 @@
     "https://*.youtube.com/*"
   ],
   "options_page": "options.html",
+  "icons": {
+    "48": "assets/icons/icon48.png"
+  },
   "action": {
     "default_icon": {
       "48": "icon48.png"
@@ -28,8 +31,7 @@
         "https://youtube.com/*",
         "https://figma.com/*"
       ],
-      "css": ["styles.css"],
-      "js": ["content.js"]
+      "js": ["webSummarizer.js"]
     },
     {
       "matches": [
@@ -37,12 +39,11 @@
         "https://chatgpt.com/*",
         "https://gemini.google.com/*"
       ],
-      "js": ["inject-prompt.js"]
+      "js": ["aiPasteHandler.js"]
     },
     {
       "matches": ["*://*.youtube.com/*"],
-      "css": ["styles.css"],
-      "js": ["youtube-handler.js"]
+      "js": ["youtubeSummarizer.js"]
     }
   ],
   "background": {

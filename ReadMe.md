@@ -1,57 +1,100 @@
-# Free Website AI Summarizer
+# Free YouTube & Web AI Summarizer
 
-A Chrome extension that lets you summarize any webpage using your existing AI subscriptions (ChatGPT, Claude, or Gemini).
+A browser extension that helps you summarize web content and YouTube videos using your existing AI accounts (ChatGPT, Claude, or Gemini). No additional subscription required!
 
 ## Features
 
-- 🔍 One-click webpage summarization
-- 🤖 Works with multiple AI services:
-  - ChatGPT
-  - Claude
-  - Gemini
-- ✨ Customizable prompt template
-- 📱 Floating action button for easy access
-- 🎯 Smart text capture of relevant content
-- 🔒 Uses your own AI account/subscription (no additional costs)
+- 🌐 **Web Content Summarization**: Summarize any webpage with one click
+- 🎥 **YouTube Integration**: Get quick summaries of YouTube video transcripts
+- 🤖 **Multiple AI Services**: Works with:
+  - OpenAI's ChatGPT
+  - Anthropic's Claude
+  - Google's Gemini
+- ✨ **Customizable Prompts**: Create and manage your own summarization templates
+- 🎯 **Non-intrusive UI**: Minimal floating button that appears only when needed
 
 ## Installation
 
-1. Download or clone this repository
-2. Open Chrome and go to `chrome://extensions/`
-3. Enable "Developer mode" in the top-right corner
-4. Click "Load unpacked" and select the extension directory
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd youtube-web-ai-summarizer-extension
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Build the extension:
+```bash
+npm run build
+```
+
+This will create a `dist` directory containing the built extension.
+
+4. Load the extension in Chrome:
+   - Open Chrome and go to `chrome://extensions/`
+   - Enable "Developer mode" in the top right
+   - Click "Load unpacked" and select the `dist` directory
+
+## Development
+
+The project uses the following tech stack:
+- Chrome Extension Manifest V3
+- React 18
+- TypeScript
+- Vite
+- TailwindCSS
+
+### Project Structure
+
+```
+src/
+├── background/         # Background service worker
+├── components/        # Reusable React components
+├── config/           # Configuration files
+├── entries/         # Extension entry points
+│   ├── ai-paste-handler/   # AI service integration
+│   ├── options/            # Extension options page
+│   ├── web-summarizer/     # Web content summarizer
+│   └── youtube-summarizer/ # YouTube content summarizer
+├── hooks/           # Custom React hooks
+├── lib/            # Utility functions
+└── styles/        # Global styles
+```
 
 ## Usage
 
-1. Navigate to any webpage you want to summarize
-2. Click the floating green button
-3. The extension will:
-   - Capture the page content
-   - Format it appropriately
-   - Copy the formatted content to your clipboard
-   - Open your chosen AI service in a new tab
-   - Paste the content into the AI chat
-4. Edit the prompt or just click submit to get your summary
+1. **Web Summarization**:
+   - Visit any webpage
+   - Click the floating summarize button
+   - The content will be extracted, opened in your selected AI service and summarized
 
-## Configuration
+2. **YouTube Summarization**:
+   - Go to any YouTube video
+   - Click the floating summarize button
+   - The video transcript will be retrieved, opened in your selected AI service and summarized
 
-1. Click the extension icon
-2. Choose your preferred AI service:
-   - ChatGPT
-   - Claude
-   - Gemini
-3. Customize the default prompt template if desired
-4. Save your settings
+3. **Customizing Prompts**:
+   - Open extension options
+   - Click "Add New" under Prompt Templates
+   - Create your custom summarization prompt
+   - Use {{content}} placeholder for the text to be summarized
+
+4. **Selecting AI Service**:
+   - Open extension options
+   - Choose your preferred AI service (ChatGPT, Claude, or Gemini)
+   - The extension will use this service for all summarizations
 
 ## Privacy
 
 This extension:
-
 - Does not collect any personal data
-- Works entirely locally
-- Requires no external servers
-- Uses only your existing AI service subscriptions
+- Does not track user behavior
+- Only accesses webpage content when explicitly requested
+- Requires permissions only for essential functionality
 
-## License
+---
 
-MIT License - Feel free to modify and use as needed!
+Made with ❤️ for the open-source community
