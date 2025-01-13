@@ -10,7 +10,7 @@ export const AI_SERVICES: Record<AiServiceType, AiService> = {
   [AiServiceType.CHATGPT]: {
     type: AiServiceType.CHATGPT,
     name: 'ChatGPT',
-    url: 'https://chat.openai.com',
+    url: 'https://chatgpt.com',
     icon: '/assets/icons/chatgpt-logo.png'
   },
   [AiServiceType.GEMINI]: {
