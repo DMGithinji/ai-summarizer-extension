@@ -43,6 +43,7 @@
     },
     {
       "matches": ["*://*.youtube.com/*"],
+      "css": ["youtubeSummarizer.css"],
       "js": ["youtubeSummarizer.js"]
     }
   ],

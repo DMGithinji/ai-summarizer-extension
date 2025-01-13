@@ -23,7 +23,7 @@ export interface AiService {
   icon: string;
 }
 
-interface TranscriptSegment {
+export interface TranscriptSegment {
   text: string;
   start: number;
   end: number

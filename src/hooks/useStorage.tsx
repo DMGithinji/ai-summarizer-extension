@@ -12,13 +12,14 @@ interface StorageReturnType {
   editPrompt: (id: string, updates: Partial<Prompt>) => Promise<void>;
   deletePrompt: (id: string) => Promise<void>;
   setDefaultPrompt: (id: string) => Promise<void>;
-  getDefaultPrompt: () => Prompt | undefined;
+  getDefaultPrompt: () => Promise<Prompt>;
+  getAiUrl: () => Promise<string>;
   setAiUrl: (url: string) => Promise<void>;
   resetToDefaults: () => Promise<void>;
 }
 
 // Default values
-export const DEFAULT_AI_SERVICE = AI_SERVICES[AiServiceType.CHATGPT];
+export const DEFAULT_AI_SERVICE = AI_SERVICES[AiServiceType.GEMINI];
 
 const DEFAULT_PROMPTS = PRECONFIGURED_PROMPTS;
 
@@ -125,9 +126,30 @@ export function useStorage(): StorageReturnType {
     }
   }, [prompts, saveToStorage]);
 
-  const getDefaultPrompt = useCallback(() => {
-    return prompts.find(prompt => prompt.isDefault);
-  }, [prompts]);
+  const getDefaultPrompt = useCallback(async () => {
+    try {
+      const result = await chrome.storage.sync.get({
+        prompts: DEFAULT_PROMPTS
+      });
+      return result.prompts.find((prompt: Prompt) => prompt.isDefault) || DEFAULT_PROMPTS[0];
+    } catch (err) {
+      console.error('Failed to get default prompt:', err);
+      return undefined;
+    }
+  }, []);
+
+  // New function to get AI URL directly from storage
+  const getAiUrl = useCallback(async () => {
+    try {
+      const result = await chrome.storage.sync.get({
+        aiUrl: DEFAULT_AI_SERVICE.url
+      });
+      return result.aiUrl;
+    } catch (err) {
+      console.error('Failed to get AI URL:', err);
+      return DEFAULT_AI_SERVICE.url;
+    }
+  }, []);
 
   const setAiUrl = useCallback(async (url: string) => {
     setLoading(true);
@@ -167,6 +189,7 @@ export function useStorage(): StorageReturnType {
     deletePrompt,
     setDefaultPrompt,
     getDefaultPrompt,
+    getAiUrl,
     setAiUrl,
     resetToDefaults
   };

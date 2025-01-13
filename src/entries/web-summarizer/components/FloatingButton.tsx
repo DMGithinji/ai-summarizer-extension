@@ -24,7 +24,7 @@ export function FloatingButton({ onCapture, onClose }: FloatingButtonProps) {
           justifyContent: 'center',
           width: '36px',
           height: '36px',
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          backgroundColor: 'rgba(255, 255, 255)',
           border: '1px solid rgba(229, 231, 235, 1)',
           borderRadius: '9999px',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
@@ -34,11 +34,9 @@ export function FloatingButton({ onCapture, onClose }: FloatingButtonProps) {
         }}
         title="Summarize with AI"
         onMouseEnter={e => {
-          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 1)';
           e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
           e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
         }}
       >
@@ -73,7 +71,7 @@ export function FloatingButton({ onCapture, onClose }: FloatingButtonProps) {
             opacity: 0.7,
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.backgroundColor = '#e5e7eb'; // Solid background on hover
+            e.currentTarget.style.backgroundColor = '#fff'; // Solid background on hover
             e.currentTarget.style.opacity = '1'; // Fully visible
             e.currentTarget.style.transform = 'scale(1.1)';
           }}

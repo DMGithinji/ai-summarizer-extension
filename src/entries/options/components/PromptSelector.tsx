@@ -65,7 +65,7 @@ export function PromptSelector() {
                 />
               ) : (
                 <div>
-                  <pre className="p-3 bg-gray-800 rounded-md text-sm text-gray-300 font-mono max-h-[400px] overflow-x-hidden overflow-y-auto">
+                  <pre className="p-3 bg-gray-800 rounded-md text-sm text-gray-300 font-mono max-h-[400px] text-wrap overflow-y-scroll">
                     {prompt.content}
                   </pre>
                   <div className="flex space-x-3 mt-4">

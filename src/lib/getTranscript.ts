@@ -26,6 +26,6 @@ function getYoutubeVideoId(url: string) {
 }
 
 function formatTranscript(data: TranscriptData) {
-  const formattedTranscript = data.data.transcript.map(entry => `(${entry.start.toFixed(2)}-${entry.end.toFixed(2)}) ${entry.text}`).join('\n');
+  const formattedTranscript = data.data.transcript;
   return formattedTranscript
 }
