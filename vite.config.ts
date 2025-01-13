@@ -50,36 +50,33 @@ function copyContentScripts(): Plugin {
   return {
     name: "copy-content-scripts",
     closeBundle() {
-      const webSummarizerDir = './dist_webSummarizer';
-      if (fs.existsSync(webSummarizerDir)) {
-        // Copy both content scripts to dist
-        fs.copyFileSync(
-          resolve(webSummarizerDir, 'webSummarizer.js'),
-          resolve('dist', 'webSummarizer.js')
-        );
-        // Clean up temporary directory
-        fs.rmSync(webSummarizerDir, { recursive: true });
-      }
-      const pasteDir = './dist_aiPasteHandler';
-      if (fs.existsSync(pasteDir)) {
-        // Copy both content scripts to dist
-        fs.copyFileSync(
-          resolve(pasteDir, 'aiPasteHandler.js'),
-          resolve('dist', 'aiPasteHandler.js')
-        );
-        // Clean up temporary directory
-        fs.rmSync(pasteDir, { recursive: true });
-      }
-      const youtubeSummarizerDir = './dist_youtubeSummarizer';
-      if (fs.existsSync(youtubeSummarizerDir)) {
-        // Copy both content scripts to dist
-        fs.copyFileSync(
-          resolve(youtubeSummarizerDir, 'youtubeSummarizer.js'),
-          resolve('dist', 'youtubeSummarizer.js')
-        );
-        // Clean up temporary directory
-        fs.rmSync(youtubeSummarizerDir, { recursive: true });
-      }
+      // Helper function to safely copy file if it exists
+      const safeCopyFile = (src: string, dest: string) => {
+        if (fs.existsSync(src)) {
+          fs.copyFileSync(src, dest);
+        }
+      };
+
+      const copyFilesForEntry = (dir: string, name: string) => {
+        if (fs.existsSync(dir)) {
+          // Copy JS file
+          safeCopyFile(
+            resolve(dir, `${name}.js`),
+            resolve('dist', `${name}.js`)
+          );
+          // Copy CSS file - look for both potential CSS file names
+          safeCopyFile(
+            resolve(dir, `${name}.css`),
+            resolve('dist', `${name}.css`)
+          );
+          // Clean up temporary directory
+          fs.rmSync(dir, { recursive: true });
+        }
+      };
+
+      copyFilesForEntry('./dist_webSummarizer', 'webSummarizer');
+      copyFilesForEntry('./dist_aiPasteHandler', 'aiPasteHandler');
+      copyFilesForEntry('./dist_youtubeSummarizer', 'youtubeSummarizer');
     }
   };
 }

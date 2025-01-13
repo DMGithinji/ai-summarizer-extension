@@ -23,8 +23,16 @@ function createModuleConfig(entryFile: string, name: string) {
             'react-dom': 'ReactDOM',
           },
           intro: 'const process = { env: { NODE_ENV: "production" } };',
+          assetFileNames: (assetInfo) => {
+            const assetName = assetInfo.names[0];
+            if (assetName.includes('.css')) {
+              return `${name}.css`;
+            }
+            return assetName;
+          },
         }
-      }
+      },
+      cssCodeSplit: false,
     },
     resolve: {
       alias: {

@@ -1,20 +1,27 @@
-import { createRoot } from 'react-dom/client'
-import { YTSummarizer } from './components/YTSummarizer'
+import { createRoot } from 'react-dom/client';
+import { YTSummarizerRoot } from './components/YTSummarizerRoot';
 
-// Wrap everything in an IIFE to avoid global scope pollution
-;(function() {
-  function init() {
-    const root = document.createElement('div')
-    root.id = 'youtube-summarizer-root'
-    document.body.appendChild(root)
+// Simple initialization
+function init() {
+  const existingRoot = document.getElementById('yt-summarizer-app-root');
+  if (existingRoot) return;
 
-    createRoot(root).render(<YTSummarizer />)
-  }
+  const root = document.createElement('div');
+  root.id = 'yt-summarizer-app-root';
+  document.body.appendChild(root);
+  createRoot(root).render(<YTSummarizerRoot />);
+}
 
-  // Initialize after DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init)
+// Initialize on video pages and handle navigation
+if (window.location.pathname === '/watch') {
+  init();
+}
+
+window.addEventListener('yt-navigate-finish', () => {
+  const existingRoot = document.getElementById('yt-summarizer-app-root');
+  if (window.location.pathname === '/watch') {
+    if (!existingRoot) init();
   } else {
-    init()
+    existingRoot?.remove();
   }
-})();
+});
