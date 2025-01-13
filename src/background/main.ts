@@ -1,7 +1,7 @@
 // Valid URL patterns for each AI service
 const VALID_PATHS: Record<string, string> = {
   'claude.ai': '/new',
-  'chat.openai.com': '/',
+  'chatgpt.com': '/',
   'gemini.google.com': '/app'
 };
 

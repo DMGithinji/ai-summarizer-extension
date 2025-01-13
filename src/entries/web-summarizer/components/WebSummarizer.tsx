@@ -11,7 +11,7 @@ export function WebSummarizer() {
   const captureAndNavigate = useCallback(async () => {
     try {
       // Get and process prompt
-      const defaultPrompt = getDefaultPrompt() || { content: '' }
+      const defaultPrompt = await getDefaultPrompt() || { content: '' }
       const capturedText = await captureText()
       const processedPrompt = defaultPrompt.content.replace('{{content}}', capturedText)
 
