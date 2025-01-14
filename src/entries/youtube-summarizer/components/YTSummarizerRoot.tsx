@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { YTSummarizer } from './YTSummarizer';
 import useMobile from '../hooks/useMobile';
 import { getCurrentVideoId } from '@/lib/utils';
+import { ROOT_ID } from '../main';
+
 
 export const YTSummarizerRoot: React.FC = () => {
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
@@ -36,14 +38,14 @@ export const YTSummarizerRoot: React.FC = () => {
 
     if (isMobile) {
       const mobileRoot = document.createElement('div');
-      mobileRoot.id = 'yt-summarizer-root';
+      mobileRoot.id = ROOT_ID;
       document.body.appendChild(mobileRoot);
       setMountNode(mobileRoot);
 
       return () => mobileRoot.remove();
     } else {
       const desktopRoot = document.createElement('div');
-      desktopRoot.id = 'yt-summarizer-root';
+      desktopRoot.id = ROOT_ID;
 
       // Initial mount attempt
       if (!mountToSecondary(desktopRoot)) {
@@ -95,7 +97,7 @@ export const YTSummarizerRoot: React.FC = () => {
         const secondary = document.querySelector('#secondary');
         if (secondary && !mountNode) {
           const desktopRoot = document.createElement('div');
-          desktopRoot.id = 'yt-summarizer-root';
+          desktopRoot.id = ROOT_ID;
           mountToSecondary(desktopRoot);
         }
       };
