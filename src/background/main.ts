@@ -26,6 +26,11 @@ function isValidAiUrl(url: string): boolean {
 chrome.action.onClicked.addListener(() => {
   chrome.runtime.openOptionsPage();
 });
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === 'OPEN_OPTIONS_PAGE') {
+    chrome.runtime.openOptionsPage();
+  }
+});
 
 // Listen for tab updates
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {

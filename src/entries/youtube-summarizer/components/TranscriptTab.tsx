@@ -60,6 +60,11 @@ export const TranscriptTab = ({
     [retrieveTranscript]
   );
 
+  const openOptions = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    chrome.runtime.sendMessage({ type: 'OPEN_OPTIONS_PAGE' });
+  }, []);
+
   return (
     <div className="relative z-50 mb-2 mt-2 px-1">
       <Accordion
@@ -89,19 +94,23 @@ export const TranscriptTab = ({
                   <Sparkle className="h-16 w-16 mr-2" />
                   Summarize
                 </Button>
-                <button
-                  className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    copyTranscript();
-                  }}
-                >
-                  {isOpen ? (
+                {isOpen ? (
+                  <button
+                    title="Copy transcript"
+                    className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
+                    onClick={copyTranscript}
+                  >
                     <Copy className="h-6 w-6" />
-                  ) : (
+                  </button>
+                ) : (
+                  <button
+                    title="Extension settings"
+                    className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
+                    onClick={openOptions}
+                  >
                     <Settings className="h-6 w-6" />
-                  )}
-                </button>
+                  </button>
+                )}
               </div>
             </div>
           </AccordionTrigger>
