@@ -7,8 +7,16 @@ import {
 import { TranscriptSegment } from "@/config/types";
 import { formatTimestamp } from "@/lib/utils";
 
-import { Copy, Settings, Loader2, ChevronDown, Sparkles, CopyCheck } from "lucide-react";
-import { useState, useCallback } from "react";
+import {
+  Copy,
+  Settings,
+  Loader2,
+  ChevronDown,
+  Sparkles,
+  CopyCheck,
+  CirclePlus,
+} from "lucide-react";
+import { useState, useCallback, useRef } from "react";
 
 export const TranscriptTab = ({
   error,
@@ -23,6 +31,7 @@ export const TranscriptTab = ({
   generateSummary: (e?: React.MouseEvent) => Promise<void>;
   retrieveTranscript: () => Promise<TranscriptSegment[] | null>;
 }) => {
+  const transcriptRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const getVideoTitle = () =>
@@ -54,7 +63,7 @@ export const TranscriptTab = ({
           `Video Title: ${getVideoTitle()}\n\nTranscript:\n${formattedTranscript}`
         );
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        setTimeout(() => setCopied(false), 1000);
       } catch (err) {
         console.error("Failed to copy transcript:", err);
       }
@@ -69,13 +78,51 @@ export const TranscriptTab = ({
 
   const handleTimestampClick = (seconds: number) => {
     // Get the video element
-    const video = document.querySelector('video');
+    const video = document.querySelector("video");
     if (video) {
       video.currentTime = seconds;
       // Optional: Scroll video into view if needed
-      video.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      video.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   };
+
+  const scrollToCurrentTime = useCallback(() => {
+    const video = document.querySelector("video");
+    if (!video || !transcript || !transcriptRef.current) return;
+
+    const currentTime = video.currentTime;
+
+    // Find the current segment and its index
+    const currentIndex = transcript.findIndex((segment, index) => {
+      const nextSegment = transcript[index + 1];
+      return (
+        currentTime >= segment.start &&
+        (!nextSegment || currentTime < nextSegment.start)
+      );
+    });
+
+    if (currentIndex === -1) return;
+
+    // Get the element directly by index
+    const segmentElements = transcriptRef.current.children;
+    const segmentElement = segmentElements[currentIndex];
+
+    console.log({ segmentElement });
+
+    if (segmentElement) {
+      segmentElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      // Add highlight to current segment
+      segmentElement.classList.add("bg-blue-500/20");
+      // Remove highlight after 5 seconds
+      setTimeout(() => {
+        segmentElement.classList.remove("bg-blue-500/20");
+      }, 5000);
+    }
+  }, [transcript]);
 
   return (
     <div className="relative z-50 mb-4 mt-2 px-1">
@@ -96,25 +143,38 @@ export const TranscriptTab = ({
               </span>
 
               <div className="flex items-center gap-3">
+                {isOpen ? (
+                  <button
+                    title="Go to current timestamp"
+                    className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      scrollToCurrentTime();
+                    }}
+                  >
+                    <CirclePlus className="h-6 w-6" />
+                  </button>
+                ) : null}
                 <button
+                  title="Get AI Summary"
                   onClick={generateSummary}
                   disabled={isLoading}
-                  className="flex gap-3 items-center text-gray-300 hover:text-white transition-colors p-2 text-[14px]"
+                  className="flex gap-3 items-center text-gray-300 hover:text-white transition-colors p-2 text-[15px]"
                 >
                   <Sparkles className="h-[16px] w-[16px]" />
                   Summarize
                 </button>
                 {isOpen ? (
                   <button
-                  title={copied ? "Copied!" : "Copy transcript"}
-                  className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
+                    title={copied ? "Copied!" : "Copy transcript"}
+                    className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
                     onClick={copyTranscript}
                   >
                     {copied ? (
-    <CopyCheck className="h-8 w-8 text-green-500" />
-  ) : (
-    <Copy className="h-8 w-8" />
-  )}
+                      <CopyCheck className="h-8 w-8 text-blue-500" />
+                    ) : (
+                      <Copy className="h-8 w-8" />
+                    )}
                   </button>
                 ) : (
                   <button
@@ -144,13 +204,25 @@ export const TranscriptTab = ({
             ) : error ? (
               <div className="text-center py-8 text-red-400">{error}</div>
             ) : transcript ? (
-              <div className="text-md text-gray-200 space-y-4 max-h-[500px] overflow-y-auto">
+              <div
+                ref={transcriptRef}
+                className="text-md text-gray-200 space-y-4 max-h-[500px] overflow-y-auto"
+              >
                 {transcript.map((entry, index) => (
-                  <div key={index} className="flex gap-4 px-2">
-                    <a onClick={() => handleTimestampClick(entry.start) } className="text-xl text-blue-600 w-12 cursor-pointer flex-shrink-0">
+                  <div
+                    key={index}
+                    data-index={index}
+                    className="flex gap-4 px-2 transition-all duration-300" // Add transition
+                    >
+                    <a
+                      onClick={() => handleTimestampClick(entry.start)}
+                      className="text-[15px] leading-[1.5] text-blue-600 hover:underline w-12 cursor-pointer flex-shrink-0"
+                    >
                       {formatTimestamp(entry.start)}
                     </a>
-                    <p className="text-xl px-2">{entry.text}</p>
+                    <p className="text-[15px] leading-[1.4] px-2">
+                      {entry.text}
+                    </p>
                   </div>
                 ))}
               </div>
