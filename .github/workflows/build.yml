@@ -1,0 +1,63 @@
+name: Build and Release Extension
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build extension
+      run: npm run build
+
+    - name: Zip dist folder
+      run: |
+        cd dist
+        zip -r ../ai-summarizer.zip *
+        cd ..
+
+    - name: Generate version
+      id: version
+      run: echo "version=$(date +'%Y.%m.%d')" >> $GITHUB_OUTPUT
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ai-summarizer.zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag_name: v${{ steps.version.outputs.version }}
+        name: Release ${{ steps.version.outputs.version }}
+        body: |
+          Latest build of AI Summarizer Extension
+
+          Download the ai-summarizer.zip file to install
+        draft: false
+        prerelease: false
+
+    - name: Update README
+      run: |
+        sed -i "s|Download latest version:.*|Download latest version: [v${{ steps.version.outputs.version }}](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.version }})|g" ReadMe.md
+
+    - name: Commit README update
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add ReadMe.md
+        git commit -m "Update release link to v${{ steps.version.outputs.version }}" || echo "No changes to commit"
+        git push
