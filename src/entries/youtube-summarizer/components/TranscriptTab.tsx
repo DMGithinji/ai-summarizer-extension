@@ -4,11 +4,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import { TranscriptSegment } from "@/config/types";
 import { formatTimestamp } from "@/lib/utils";
 
-import { Sparkle, Copy, Settings, Loader2 } from "lucide-react";
+import { Copy, Settings, Loader2, ChevronDown, Sparkles, CopyCheck } from "lucide-react";
 import { useState, useCallback } from "react";
 
 export const TranscriptTab = ({
@@ -25,6 +24,7 @@ export const TranscriptTab = ({
   retrieveTranscript: () => Promise<TranscriptSegment[] | null>;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const getVideoTitle = () =>
     document.querySelector("h1.ytd-video-primary-info-renderer")?.textContent ||
     "Untitled Video";
@@ -53,6 +53,8 @@ export const TranscriptTab = ({
         await navigator.clipboard.writeText(
           `Video Title: ${getVideoTitle()}\n\nTranscript:\n${formattedTranscript}`
         );
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
       } catch (err) {
         console.error("Failed to copy transcript:", err);
       }
@@ -62,11 +64,21 @@ export const TranscriptTab = ({
 
   const openOptions = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    chrome.runtime.sendMessage({ type: 'OPEN_OPTIONS_PAGE' });
+    chrome.runtime.sendMessage({ type: "OPEN_OPTIONS_PAGE" });
   }, []);
 
+  const handleTimestampClick = (seconds: number) => {
+    // Get the video element
+    const video = document.querySelector('video');
+    if (video) {
+      video.currentTime = seconds;
+      // Optional: Scroll video into view if needed
+      video.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
   return (
-    <div className="relative z-50 mb-2 mt-2 px-1">
+    <div className="relative z-50 mb-4 mt-2 px-1">
       <Accordion
         type="single"
         collapsible
@@ -75,32 +87,34 @@ export const TranscriptTab = ({
       >
         <AccordionItem
           value="transcript"
-          className="border-0 bg-black rounded-lg overflow-hidden w-full"
+          className="border-0 bg-black rounded-[8px] overflow-hidden w-full"
         >
-          <AccordionTrigger className="py-0 px-2">
+          <AccordionTrigger className="py-1 pl-1">
             <div className="flex  items-center justify-between w-full px-4 h-14">
               <span className="text-2xl font-medium text-white">
                 Transcript
               </span>
 
-              <div className="flex items-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-300 hover:text-white bg-transparent hover:bg-transparent mr-2 text-xl"
+              <div className="flex items-center gap-3">
+                <button
                   onClick={generateSummary}
                   disabled={isLoading}
+                  className="flex gap-3 items-center text-gray-300 hover:text-white transition-colors p-2 text-[14px]"
                 >
-                  <Sparkle className="h-16 w-16 mr-2" />
+                  <Sparkles className="h-[16px] w-[16px]" />
                   Summarize
-                </Button>
+                </button>
                 {isOpen ? (
                   <button
-                    title="Copy transcript"
-                    className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
+                  title={copied ? "Copied!" : "Copy transcript"}
+                  className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
                     onClick={copyTranscript}
                   >
-                    <Copy className="h-6 w-6" />
+                    {copied ? (
+    <CopyCheck className="h-8 w-8 text-green-500" />
+  ) : (
+    <Copy className="h-8 w-8" />
+  )}
                   </button>
                 ) : (
                   <button
@@ -108,9 +122,16 @@ export const TranscriptTab = ({
                     className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
                     onClick={openOptions}
                   >
-                    <Settings className="h-6 w-6" />
+                    <Settings className="h-8 w-8" />
                   </button>
                 )}
+                <div className="text-gray-300">
+                  <ChevronDown
+                    className={`h-8 w-8 transition-transform duration-200 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </div>
               </div>
             </div>
           </AccordionTrigger>
@@ -126,9 +147,9 @@ export const TranscriptTab = ({
               <div className="text-md text-gray-200 space-y-4 max-h-[500px] overflow-y-auto">
                 {transcript.map((entry, index) => (
                   <div key={index} className="flex gap-4 px-2">
-                    <span className="text-xl text-gray-400 w-12 flex-shrink-0">
+                    <a onClick={() => handleTimestampClick(entry.start) } className="text-xl text-blue-600 w-12 cursor-pointer flex-shrink-0">
                       {formatTimestamp(entry.start)}
-                    </span>
+                    </a>
                     <p className="text-xl px-2">{entry.text}</p>
                   </div>
                 ))}

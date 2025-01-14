@@ -11,7 +11,7 @@ export function FloatingButton({ onCapture, onClose }: FloatingButtonProps) {
       style={{
         position: 'fixed', // Ensure it's fixed to the viewport
         bottom: '20px', // Bottom padding
-        right: '44px', // Right padding
+        right: '36px', // Right padding
         zIndex: 999999, // High z-index to stay above other elements
       }}
     >

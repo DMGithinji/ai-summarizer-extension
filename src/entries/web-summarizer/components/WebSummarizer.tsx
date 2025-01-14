@@ -6,8 +6,6 @@ import { captureText } from '@/lib/captureText '
 export function WebSummarizer() {
   const { getDefaultPrompt, aiUrl } = useStorage();
 
-  console.log(window.location.href);
-
   const captureAndNavigate = useCallback(async () => {
     try {
       // Get and process prompt
