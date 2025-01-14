@@ -12,3 +12,12 @@ export function formatTimestamp(seconds: number): string {
     .toString()
     .padStart(2, "0")}`;
 }
+
+export const getCurrentVideoId = () => {
+  try {
+    const url = new URL(window.location.href);
+    return url.searchParams.get('v');
+  } catch {
+    return null;
+  }
+};
