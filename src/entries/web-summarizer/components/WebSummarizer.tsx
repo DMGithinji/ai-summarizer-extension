@@ -9,9 +9,9 @@ export function WebSummarizer() {
   const captureAndNavigate = useCallback(async () => {
     try {
       // Get and process prompt
-      const defaultPrompt = await getDefaultPrompt() || { content: '' }
+      const defaultPrompt = await getDefaultPrompt();
       const capturedText = await captureText()
-      const processedPrompt = defaultPrompt.content.replace('{{content}}', capturedText)
+      const processedPrompt = `${defaultPrompt.content}\n\nContent: ${capturedText}`
 
       // Copy to clipboard
       await navigator.clipboard.writeText('')
