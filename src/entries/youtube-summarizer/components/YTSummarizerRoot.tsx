@@ -2,9 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { YTSummarizer } from './YTSummarizer';
 import useMobile from '../hooks/useMobile';
+import { getCurrentVideoId } from '@/lib/utils';
 
 export const YTSummarizerRoot: React.FC = () => {
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
+  const [videoId, setVideoId] = useState<string | null>(null);
   const observerRef = useRef<MutationObserver | null>(null);
   const isMobile = useMobile();
 
@@ -106,9 +108,26 @@ export const YTSummarizerRoot: React.FC = () => {
     }
   }, [isMobile, mountNode]);
 
+  // Update videoId when URL changes
+  useEffect(() => {
+    const handleNavigation = () => {
+      setVideoId(getCurrentVideoId());
+    };
+
+    window.addEventListener('yt-navigate-finish', handleNavigation);
+    setVideoId(getCurrentVideoId()); // Initial video ID
+
+    return () => {
+      window.removeEventListener('yt-navigate-finish', handleNavigation);
+    };
+  }, []);
+
   // Only render when we have a mount node
   return mountNode ? createPortal(
-    <YTSummarizer displayMode={isMobile ? 'floating' : 'tab'} />,
+    <YTSummarizer
+      key={videoId} // Force reset on video change
+      displayMode={isMobile ? 'floating' : 'tab'}
+    />,
     mountNode
   ) : null;
 };
