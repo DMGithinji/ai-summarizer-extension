@@ -68,24 +68,26 @@ src/
 
 1. **Web Summarization**:
    - Visit any webpage
-   - Click the floating summarize button
+   - Click the floating summarize button at the bottom right
    - The content will be extracted, opened in your selected AI service and summarized
 
 2. **YouTube Summarization**:
    - Go to any YouTube video
-   - Click the floating summarize button
-   - The video transcript will be retrieved, opened in your selected AI service and summarized
+   - Expand the transcript tab
+   - The video transcript will be retrieved, and upon clicking summarize, you'll be redirected to your selected AI service and get summary
+   - You can also:
+     - Skip to current playback position in transcript
+     - Navigate video by clicking on transcript timestamps
 
-3. **Customizing Prompts**:
-   - Open extension options
-   - Click "Add New" under Prompt Templates
-   - Create your custom summarization prompt
-   - Use {{content}} placeholder for the text to be summarized
-
-4. **Selecting AI Service**:
+3. **Selecting AI Service**:
    - Open extension options
    - Choose your preferred AI service (ChatGPT, Claude, or Gemini)
    - The extension will use this service for all summarizations
+
+4. **Customizing Prompts**:
+   - Open extension options
+   - Choose from the list of prompts
+   - Or Edit/Add prompts to use in your summaries
 
 ## Privacy
 
