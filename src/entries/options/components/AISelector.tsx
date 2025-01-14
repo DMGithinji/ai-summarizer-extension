@@ -5,21 +5,21 @@ export function AISelector() {
   const { aiUrl, setAiUrl } = useStorage();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <h1 className="text-2xl font-bold text-white">Configure AI Summary</h1>
-      <p className="text-gray-400 text-lg">
+      <p className="text-neutral-400 text-lg">
         Select which AI service to use for getting summaries.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="flex flex-row gap-4 w-full">
         {Object.values(AI_SERVICES).map((service) => (
           <button
             key={service.type}
             onClick={() => setAiUrl(service.url)}
-            className={`relative flex flex-col items-center p-4 bg-gray-800 rounded-lg border-2 transition-all ${
+            className={`relative flex flex-col items-center p-4 bg-neutral-800/50 rounded-lg border transition-all flex-1 hover:bg-neutral-800 ${
               aiUrl === service.url
-                ? 'border-green-500 bg-gray-700'
-                : 'border-gray-700 hover:border-gray-600'
+                ? 'border-green-500 bg-neutral-800'
+                : 'border-neutral-700 hover:border-neutral-600'
             }`}
           >
             <img
@@ -27,7 +27,7 @@ export function AISelector() {
               alt={service.name}
               className="w-8 h-8 mb-2"
             />
-            <span className="text-white">{service.name}</span>
+            <span className="text-white text-[18px]">{service.name}</span>
             {aiUrl === service.url && (
               <div className="absolute inset-0 border border-green-500/30 rounded-lg animate-pulse" />
             )}

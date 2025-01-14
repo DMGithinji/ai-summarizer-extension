@@ -1,3 +1,27 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* Only apply Tailwind within extension components */
+#summarizer-root,
+#youtube-summarizer-root {
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+}
+
+#summarizer-root,
+#youtube-summarizer-root {
+  --radius: 8px;
+
+  --background: 0 0% 100%;
+  --foreground: 0 0% 9%;
+}
+
+.dark #summarizer-root,
+.dark #youtube-summarizer-root {
+  --background: 0 0% 9%;
+  --foreground: 0 0% 98%;
+}

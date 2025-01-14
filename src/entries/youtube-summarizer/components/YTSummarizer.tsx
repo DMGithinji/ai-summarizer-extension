@@ -50,10 +50,8 @@ export function YTSummarizer({
       if (!currentTranscript) return;
 
       try {
-        const [defaultPrompt, aiUrl] = await Promise.all([
-          getDefaultPrompt(),
-          getAiUrl(),
-        ]);
+        const aiUrl = await getAiUrl();
+        const defaultPrompt = await getDefaultPrompt();
 
         const title = getVideoTitle();
         const transcriptString = currentTranscript
