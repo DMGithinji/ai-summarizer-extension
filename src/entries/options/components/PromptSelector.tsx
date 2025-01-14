@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useStorage } from "@/hooks/useStorage";
 import { Prompt } from "@/config/types";
 import {
@@ -14,6 +14,10 @@ export function PromptSelector() {
     useStorage();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [newPrompt, setNewPrompt] = useState(false);
+  const orderedPrompts = useMemo(() => prompts.sort((a, b) => {
+    if (a.isDefault === b.isDefault) return 0;
+    return a.isDefault ? -1 : 1;
+  }), [prompts]);
 
   return (
     <div className="mt-10">
@@ -21,7 +25,7 @@ export function PromptSelector() {
         <h1 className="text-2xl font-bold text-white">Prompt Templates</h1>
         <button
           onClick={() => setNewPrompt(true)}
-          className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-500 transition duration-200 shadow"
+          className="flex items-center px-4 py-2 text-[16px] font-semibold bg-green-600 text-white rounded-md hover:bg-green-500 transition duration-200 shadow"
         >
           <Plus className="mr-2 h-4 w-4" />
           Add New
@@ -29,9 +33,9 @@ export function PromptSelector() {
       </div>
 
       <Accordion type="single" collapsible className="space-y-4">
-        {prompts.map((prompt) => (
+        {orderedPrompts.map((prompt) => (
           <AccordionItem key={prompt.id} value={prompt.id}>
-            <AccordionTrigger className="text-lg font-medium flex justify-between items-center py-3 px-4 bg-gray-800 rounded-md border border-gray-700 hover:bg-gray-700 transition">
+            <AccordionTrigger className="text-lg font-medium flex justify-between items-center py-3 px-4 bg-neutral-800 rounded-md border border-neutral-700 hover:bg-neutral-700 transition">
               <div className="flex items-center space-x-2">
                 {prompt.isDefault ? (
                   <CircleCheckBig
@@ -46,14 +50,14 @@ export function PromptSelector() {
                       event.stopPropagation();
                       setDefaultPrompt(prompt.id);
                     }}
-                    className="h-5 w-5 cursor-pointer text-gray-300"
+                    className="h-5 w-5 cursor-pointer text-neutral-300"
                   />
                 )}
 
                 <span className="text-white">{prompt.name}</span>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="py-3 bg-gray-900 rounded-b-md">
+            <AccordionContent className="py-3 bg-neutral-900 rounded-b-md">
               {editingId === prompt.id ? (
                 <PromptForm
                   prompt={prompt}
@@ -65,23 +69,23 @@ export function PromptSelector() {
                 />
               ) : (
                 <div>
-                  <pre className="p-3 bg-gray-800 rounded-md text-sm text-gray-300 font-mono max-h-[400px] text-wrap overflow-y-scroll">
+                  <pre className="p-3 bg-neutral-800 rounded-md text-neutral-300 font-mono max-h-[400px] text-wrap overflow-y-scroll">
                     {prompt.content}
                   </pre>
                   <div className="flex space-x-3 mt-4">
                     <button
                       onClick={() => setEditingId(prompt.id)}
-                      className="flex items-center px-4 py-2 border text-green-500 border-green-500 hover:border-green-500 rounded-md transition duration-200"
+                      className="flex items-center px-4 py-2 font-semibold text-white bg-green-600 rounded-md"
                     >
-                      <Edit className="mr-2 h-4 w-4" />
+                      <Edit className="mr-2 h-4 w-4 text-[16px]" />
                       Edit
                     </button>
                     {!prompt.isDefault && (
                       <button
                         onClick={() => deletePrompt(prompt.id)}
-                        className="flex items-center px-4 py-2 border border-red-600 text-red-600 rounded-md transition duration-200"
+                        className="flex items-center px-4 py-2 font-semibold bg-red-700 text-white rounded-md"
                       >
-                        <Trash className="mr-2 h-4 w-4" />
+                        <Trash className="mr-2 h-4 w-4 text-[16px]" />
                         Delete
                       </button>
                     )}
@@ -94,10 +98,10 @@ export function PromptSelector() {
 
         {newPrompt && (
           <AccordionItem value="new">
-            <AccordionTrigger className="text-lg font-medium flex justify-between items-center py-3 px-4 bg-gray-800 rounded-md border border-gray-700 hover:bg-gray-700 transition">
+            <AccordionTrigger className="text-lg font-medium flex justify-between items-center py-3 px-4 bg-neutral-800 rounded-md border border-neutral-700 hover:bg-neutral-700 transition">
               <span className="text-white">New Prompt</span>
             </AccordionTrigger>
-            <AccordionContent className="py-3 bg-gray-900 rounded-b-md px-0">
+            <AccordionContent className="py-3 bg-neutral-900 rounded-b-md px-0">
               <PromptForm
                 onSave={(data) => {
                   addPrompt(data as Omit<Prompt, "id">);
@@ -130,7 +134,7 @@ const PromptForm = ({
 
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; // Reset height to auto
+      textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set to scrollHeight
     }
   }, [content]);
@@ -142,7 +146,7 @@ const PromptForm = ({
         placeholder="Enter prompt name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="w-full p-3 mx-[2px] bg-gray-800 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+        className="w-full p-3 mx-[2px] bg-neutral-800 rounded-md text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-green-500"
       />
       <textarea
         ref={textareaRef}
@@ -150,18 +154,18 @@ const PromptForm = ({
         value={content}
         onChange={(e) => setContent(e.target.value)}
         rows={6}
-        className="w-full p-3 mx-[2px] bg-gray-800 rounded-md text-white font-mono placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-green-500 max-h-[400px] overflow-x-hidden"
+        className="w-full p-3 mx-[2px] bg-neutral-800 rounded-md text-white font-mono placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-green-500 max-h-[400px] overflow-x-hidden"
       />
       <div className="flex justify-start space-x-2">
         <button
           onClick={() => onSave({ name, content })}
-          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-500 transition duration-200"
+          className="px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-500 transition duration-200"
         >
           Save
         </button>
         <button
           onClick={onCancel}
-          className="px-4 py-2 bg-gray-700 text-gray-300 rounded-md hover:bg-gray-600 transition duration-200"
+          className="px-4 py-2 bg-neutral-700 font-semibold text-neutral-300 rounded-md hover:bg-neutral-600 transition duration-200"
         >
           Cancel
         </button>

@@ -12,18 +12,17 @@ export const PRECONFIGURED_PROMPTS: Prompt[] = [
 4. Include any notable quotes or statistics
 5. End with a brief takeaway
 
-Content to summarize: ➡️➡️➡️
-{{content}}`,
+Content to summarize: ➡️➡️➡️`,
     isDefault: true
   },
   {
     id: 'simple-summary',
     name: 'Simple Summary',
-    content: 'Summarize the following content in 5-10 bullet points:\n\n{{content}}'
+    content: 'Summarize the following content in 5-10 bullet points:\n\n'
   },
   {
     id: 'eli5',
     name: 'Explain Like I\'m 12',
-    content: 'Explain the following text to me like I am 12 years old:\n\n{{content}}'
+    content: 'Explain the following text to me like I am 12 years old:\n\n'
   }
 ]

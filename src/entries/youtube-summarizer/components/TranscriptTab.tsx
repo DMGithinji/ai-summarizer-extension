@@ -14,7 +14,8 @@ import {
   ChevronDown,
   Sparkles,
   CopyCheck,
-  CirclePlus,
+  ScrollText,
+  Crosshair,
 } from "lucide-react";
 import { useState, useCallback, useRef } from "react";
 
@@ -107,8 +108,6 @@ export const TranscriptTab = ({
     const segmentElements = transcriptRef.current.children;
     const segmentElement = segmentElements[currentIndex];
 
-    console.log({ segmentElement });
-
     if (segmentElement) {
       segmentElement.scrollIntoView({
         behavior: "smooth",
@@ -138,11 +137,24 @@ export const TranscriptTab = ({
         >
           <AccordionTrigger className="py-1 pl-1">
             <div className="flex  items-center justify-between w-full px-4 h-14">
-              <span className="text-2xl font-medium text-white">
-                Transcript
-              </span>
+              <div className="flex items-center gap-3">
+                <ScrollText className="text-white h-[18px] w-[18px]" />
+                <span className="text-2xl font-semibold text-white">
+                  Transcript
+                </span>
+              </div>
 
               <div className="flex items-center gap-3">
+
+                <button
+                  title="Get AI Summary"
+                  onClick={generateSummary}
+                  disabled={isLoading}
+                  className="flex gap-3 items-center text-gray-300 hover:text-white transition-colors text-[14px]"
+                >
+                  <Sparkles className="h-[16px] w-[16px]" />
+                    Summarize
+                </button>
                 {isOpen ? (
                   <button
                     title="Go to current timestamp"
@@ -152,18 +164,9 @@ export const TranscriptTab = ({
                       scrollToCurrentTime();
                     }}
                   >
-                    <CirclePlus className="h-6 w-6" />
+                    <Crosshair className="h-6 w-6" />
                   </button>
                 ) : null}
-                <button
-                  title="Get AI Summary"
-                  onClick={generateSummary}
-                  disabled={isLoading}
-                  className="flex gap-3 items-center text-gray-300 hover:text-white transition-colors p-2 text-[15px]"
-                >
-                  <Sparkles className="h-[16px] w-[16px]" />
-                  Summarize
-                </button>
                 {isOpen ? (
                   <button
                     title={copied ? "Copied!" : "Copy transcript"}
@@ -171,9 +174,9 @@ export const TranscriptTab = ({
                     onClick={copyTranscript}
                   >
                     {copied ? (
-                      <CopyCheck className="h-8 w-8 text-blue-500" />
+                      <CopyCheck className="h-7 w-7 text-blue-500" />
                     ) : (
-                      <Copy className="h-8 w-8" />
+                      <Copy className="h-7 w-7" />
                     )}
                   </button>
                 ) : (
@@ -182,7 +185,7 @@ export const TranscriptTab = ({
                     className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
                     onClick={openOptions}
                   >
-                    <Settings className="h-8 w-8" />
+                    <Settings className="h-7 w-7" />
                   </button>
                 )}
                 <div className="text-gray-300">
@@ -216,11 +219,11 @@ export const TranscriptTab = ({
                     >
                     <a
                       onClick={() => handleTimestampClick(entry.start)}
-                      className="text-[15px] leading-[1.5] text-blue-600 hover:underline w-12 cursor-pointer flex-shrink-0"
+                      className="text-[14px] leading-[1.5] text-blue-500 hover:underline w-12 cursor-pointer flex-shrink-0"
                     >
                       {formatTimestamp(entry.start)}
                     </a>
-                    <p className="text-[15px] leading-[1.4] px-2">
+                    <p className="text-[14px] leading-[1.4] px-2">
                       {entry.text}
                     </p>
                   </div>
