@@ -3,16 +3,13 @@ import { useStorage } from "@/hooks/useStorage";
 import { fetchTranscript } from "@/lib/getTranscript";
 import { FloatingButton } from "./FloatingButton";
 import "@/styles/index.css";
-import type { DisplayMode } from "../main";
 import { TranscriptSegment } from "@/config/types";
 import { TranscriptTab } from "./TranscriptTab";
 import { formatTimestamp } from "@/lib/utils";
 
-interface YTSummarizerProps {
-  displayMode: DisplayMode;
-}
-
-export function YTSummarizer({ displayMode }: YTSummarizerProps) {
+export function YTSummarizer({
+  displayMode
+}: { displayMode: 'tab' | 'floating'}) {
   const { getDefaultPrompt, getAiUrl } = useStorage();
   const [transcript, setTranscript] = useState<TranscriptSegment[] | null>(
     null
@@ -56,7 +53,8 @@ export function YTSummarizer({ displayMode }: YTSummarizerProps) {
           getAiUrl(),
         ]);
 
-        const formattedTranscript = currentTranscript
+        const title = getVideoTitle();
+        const transcriptString = currentTranscript
           .map(
             (entry) =>
               `(${formatTimestamp(entry.start)} - ${formatTimestamp(
@@ -65,13 +63,10 @@ export function YTSummarizer({ displayMode }: YTSummarizerProps) {
           )
           .join("\n");
 
-        const processedPrompt = defaultPrompt.content.replace(
-          "{{content}}",
-          `Video Title: ${getVideoTitle()}\n\nTranscript:\n${formattedTranscript}`
-        );
+          const transcriptWithPrompt =`${defaultPrompt.content}\n${title ? 'Title: ' + title : ''}\nTranscript:\n${transcriptString}`;
 
         await navigator.clipboard.writeText("");
-        await navigator.clipboard.writeText(processedPrompt);
+        await navigator.clipboard.writeText(transcriptWithPrompt);
 
         const aiUrlWithParam = `${aiUrl}?summarize-extension`;
         window.open(aiUrlWithParam, "_blank");
@@ -89,7 +84,7 @@ export function YTSummarizer({ displayMode }: YTSummarizerProps) {
     }
   }, []);
 
-  if (displayMode === "floating") {
+  if (displayMode === 'floating') {
     return <FloatingButton onCapture={generateSummary} onClose={handleClose} />;
   }
 
