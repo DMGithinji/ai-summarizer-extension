@@ -8,8 +8,10 @@ import { TranscriptTab } from "./TranscriptTab";
 import { formatTimestamp } from "@/lib/utils";
 
 export function YTSummarizer({
-  displayMode
-}: { displayMode: 'tab' | 'floating'}) {
+  displayMode,
+}: {
+  displayMode: "tab" | "floating";
+}) {
   const { getDefaultPrompt, getAiUrl } = useStorage();
   const [transcript, setTranscript] = useState<TranscriptSegment[] | null>(
     null
@@ -63,7 +65,9 @@ export function YTSummarizer({
           )
           .join("\n");
 
-          const transcriptWithPrompt =`${defaultPrompt.content}\n${title ? 'Title: ' + title : ''}\nTranscript:\n${transcriptString}`;
+        const transcriptWithPrompt = `${defaultPrompt.content}\n${
+          title ? "Title: " + title : ""
+        }\nTranscript:\n${transcriptString}`;
 
         await navigator.clipboard.writeText("");
         await navigator.clipboard.writeText(transcriptWithPrompt);
@@ -84,7 +88,7 @@ export function YTSummarizer({
     }
   }, []);
 
-  if (displayMode === 'floating') {
+  if (displayMode === "floating") {
     return <FloatingButton onCapture={generateSummary} onClose={handleClose} />;
   }
 
