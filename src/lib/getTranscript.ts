@@ -2,42 +2,90 @@ import { TranscriptSegment } from "@/config/types";
 
 export const getVideoTranscript = async (url: string) => {
   const videoId = getYoutubeVideoId(url);
-  const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
+
+  const isMobileYouTube = window.location.hostname === "m.youtube.com";
+  const baseUrl = isMobileYouTube
+    ? "https://m.youtube.com"
+    : "https://www.youtube.com";
+  const videoUrl = `${baseUrl}/watch?v=${videoId}`;
+
+  const response = await fetch(videoUrl, {
+    mode: "same-origin",
+    credentials: "include",
+    headers: {
+      Accept: "*/*",
+      "Accept-Language": "en-US,en;q=0.5",
+      ...(isMobileYouTube && {
+        "User-Agent": navigator.userAgent,
+        "X-Requested-With": "XMLHttpRequest",
+      }),
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Transcript query failed. Failed to fetch video page");
+  }
+
   const youtubeHtml = await response.text();
 
   // Match URL pattern between the starting and ending markers
-  const transcriptLinkPattern = /https:\/\/www\.youtube\.com\/api\/timedtext\?v.*?lang=en/;
+  const transcriptLinkPattern =
+    /(?:https:\/\/(?:www|m)\.youtube\.com)?\/api\/timedtext\?[^"']+lang=en[^"']*/;
   const match = youtubeHtml.match(transcriptLinkPattern);
 
   if (!match) return null;
 
+  let transcriptUrl = match[0];
+
+  // If it's a relative URL (like when on mobile), use the same domain we made the original request to
+  if (transcriptUrl.startsWith("/")) {
+    transcriptUrl = `${baseUrl}${transcriptUrl}`;
+  }
   // Normalize the URL by replacing Unicode-escaped ampersands
-  const normalizedTranscriptUrl = match[0].replace(/\\u0026/g, '&');
-  const transcriptSegments = await fetchAndParseTranscript(normalizedTranscriptUrl);
-  const transcript = resegmentTranscript(transcriptSegments)
+  transcriptUrl = match[0].replace(/\\u0026/g, "&");
+
+  const xmlText = await fetchXMLTranscript(transcriptUrl, isMobileYouTube);
+  const transcriptSegments = parseXMLTranscript(xmlText);
+  const transcript = resegmentTranscript(transcriptSegments);
 
   return transcript;
 };
 
 export function getYoutubeVideoId(url: string) {
   const urlObj = new URL(url);
-  const videoId = urlObj.searchParams.get('v');
+  const videoId = urlObj.searchParams.get("v");
   if (!videoId) {
-    throw new Error('Could not find video ID');
+    throw new Error("Could not find video ID");
   }
   return videoId;
 }
 
-async function fetchAndParseTranscript(url: string) {
+async function fetchXMLTranscript(
+  normalizedTranscriptUrl: string,
+  includeAgent: boolean
+) {
   try {
-    const response = await fetch(url);
-    const xmlText = await response.text();
-    return parseXMLTranscript(xmlText);
+    const transcriptResponse = await fetch(normalizedTranscriptUrl, {
+      mode: "same-origin",
+      credentials: "include",
+      headers: {
+        Accept: "*/*",
+        "Accept-Language": "en-US,en;q=0.5",
+        ...(includeAgent && {
+          "User-Agent": navigator.userAgent,
+          "X-Requested-With": "XMLHttpRequest",
+        }),
+      },
+    });
+
+    if (!transcriptResponse.ok) {
+      throw new Error("Failed to fetch transcript");
+    }
+    return await transcriptResponse.text();
   } catch (error) {
-    console.error('Error fetching transcript:', error);
-    return [];
+    throw Error(`Error fetching transcript: ${error}`);
   }
-};
+}
 
 function resegmentTranscript(
   transcriptData: TranscriptSegment[],
@@ -49,7 +97,7 @@ function resegmentTranscript(
   let currentSegment = {
     start: transcriptData[0].start,
     end: transcriptData[0].start + segmentDuration,
-    text: [] as string[]
+    text: [] as string[],
   };
 
   for (const section of transcriptData) {
@@ -62,14 +110,14 @@ function resegmentTranscript(
       segments.push({
         start: currentSegment.start,
         end: currentSegment.end,
-        text: currentSegment.text.join(' ').trim()
+        text: currentSegment.text.join(" ").trim(),
       });
 
       // Start new segment
       currentSegment = {
         start: currentSegment.end,
         end: currentSegment.end + segmentDuration,
-        text: []
+        text: [],
       };
     }
 
@@ -82,7 +130,7 @@ function resegmentTranscript(
     segments.push({
       start: currentSegment.start,
       end: currentSegment.end,
-      text: currentSegment.text.join(' ').trim()
+      text: currentSegment.text.join(" ").trim(),
     });
   }
 
@@ -96,21 +144,21 @@ const parseXMLTranscript = (xmlText: string) => {
     const xmlDoc = parser.parseFromString(xmlText, "text/xml");
 
     // Get all text nodes
-    const textNodes = xmlDoc.getElementsByTagName('text');
+    const textNodes = xmlDoc.getElementsByTagName("text");
 
     // Convert to array and map to desired format
-    return Array.from(textNodes).map(node => {
-      const start = parseFloat(node.getAttribute('start') || '0');
-      const duration = parseFloat(node.getAttribute('dur') || '0');
+    return Array.from(textNodes).map((node) => {
+      const start = parseFloat(node.getAttribute("start") || "0");
+      const duration = parseFloat(node.getAttribute("dur") || "0");
 
       return {
         start,
-        text: node.textContent || '',
-        end: start + duration
+        text: node.textContent || "",
+        end: start + duration,
       };
     });
   } catch (error) {
-    console.error('Error parsing transcript XML:', error);
+    console.error("Error parsing transcript XML:", error);
     return [];
   }
 };
