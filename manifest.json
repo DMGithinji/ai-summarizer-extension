@@ -8,7 +8,8 @@
     "https://claude.ai/*",
     "https://chatgpt.com/*",
     "https://gemini.google.com/*",
-    "https://*.youtube.com/*"
+    "https://*.youtube.com/*",
+    "https://m.youtube.com/*"
   ],
   "options_page": "options.html",
   "icons": {
