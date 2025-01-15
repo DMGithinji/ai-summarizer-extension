@@ -1,6 +1,6 @@
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useStorage } from "@/hooks/useStorage";
-import { fetchTranscript } from "@/lib/getTranscript";
+import { getVideoTranscript } from "@/lib/getTranscript";
 import { FloatingButton } from "./FloatingButton";
 import "@/styles/index.css";
 import { TranscriptSegment } from "@/config/types";
@@ -30,7 +30,7 @@ export function YTSummarizer({
     setError(null);
 
     try {
-      const newTranscript = await fetchTranscript(window.location.href);
+      const newTranscript = await getVideoTranscript(window.location.href);
       setTranscript(newTranscript);
       return newTranscript;
     } catch (err) {
