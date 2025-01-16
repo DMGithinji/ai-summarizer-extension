@@ -19,9 +19,12 @@ export function YTSummarizer({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getVideoTitle = () =>
-    document.querySelector("h1.ytd-video-primary-info-renderer")?.textContent ||
-    "Untitled Video";
+  const getVideoTitle = () => {
+    const title = document.querySelector(
+      "h1.ytd-video-primary-info-renderer"
+    )?.textContent;
+    return title ? `Title: ${title}` : "";
+  };
 
   const retrieveTranscript = useCallback(async () => {
     if (transcript || isLoading) return transcript;
@@ -63,9 +66,7 @@ export function YTSummarizer({
           )
           .join("\n");
 
-        const transcriptWithPrompt = `${defaultPrompt.content}\n${
-          title ? "Title: " + title : ""
-        }\nTranscript:\n${transcriptString}`;
+        const transcriptWithPrompt = `${defaultPrompt.content}\n${title}\nTranscript:\n${transcriptString}`;
 
         await navigator.clipboard.writeText("");
         await navigator.clipboard.writeText(transcriptWithPrompt);
