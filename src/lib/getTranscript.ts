@@ -110,7 +110,7 @@ function resegmentTranscript(
       segments.push({
         start: currentSegment.start,
         end: currentSegment.end,
-        text: currentSegment.text.join(" ").trim().replace(/&#39;/g, "'"),
+        text: currentSegment.text.join(" ").trim(),
       });
 
       // Start new segment
@@ -122,7 +122,8 @@ function resegmentTranscript(
     }
 
     // Add text to current segment
-    currentSegment.text.push(section.text);
+    const cleanedText = section.text.replace(/&#39;/g, "'");
+    currentSegment.text.push(cleanedText);
   }
 
   // Add the last segment if it has any text

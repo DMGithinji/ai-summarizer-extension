@@ -2,6 +2,17 @@ import { Prompt } from "./types";
 
 export const PRECONFIGURED_PROMPTS: Prompt[] = [
   {
+    id: 'eli5',
+    name: 'Explain Like I\'m 12',
+    content: "Explain the following text to me like I am 12 years old.\nBreak the text up using relevant dynamic emojis.\nDon't explain obvious stuff.\n",
+    isDefault: true
+  },
+  {
+    id: 'surprise-me',
+    name: 'Surprise Me',
+    content: 'Summarize this in an interesting way that I will love to read.\nBreak up the text up using relevant dynamic emojis.\nSurprise me 😉\n'
+  },
+  {
     id: 'default-summary',
     name: 'Default Summary',
     content: `Please provide a summary of the following content:
@@ -11,18 +22,6 @@ export const PRECONFIGURED_PROMPTS: Prompt[] = [
 3. Expound briefly on each bullet point if there's need
 4. Include any notable quotes or statistics
 5. End with a brief takeaway
-
-Content to summarize: ➡️➡️➡️`,
-    isDefault: true
+`,
   },
-  {
-    id: 'simple-summary',
-    name: 'Simple Summary',
-    content: 'Summarize the following content in 5-10 bullet points:\n\n'
-  },
-  {
-    id: 'eli5',
-    name: 'Explain Like I\'m 12',
-    content: 'Explain the following text to me like I am 12 years old:\n\n'
-  }
 ]
