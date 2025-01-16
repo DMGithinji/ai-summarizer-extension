@@ -1,114 +1,66 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import { YTSummarizer } from './YTSummarizer';
-import useMobile from '../hooks/useMobile';
-import { getCurrentVideoId } from '@/lib/utils';
-import { ROOT_ID } from '../main';
+import React, { useEffect, useState } from 'react';
 
+import { getCurrentVideoId } from '@/lib/utils';
+import useMobile from '../hooks/useMobile';
+import { ROOT_ID } from '../main';
+import { YTSummarizer } from './YTSummarizer';
 
 export const YTSummarizerRoot: React.FC = () => {
-  const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
   const [videoId, setVideoId] = useState<string | null>(null);
-  const observerRef = useRef<MutationObserver | null>(null);
   const isMobile = useMobile();
 
-  // Try to mount to secondary
-  const mountToSecondary = (desktopRoot: HTMLElement): boolean => {
-    const secondary = document.querySelector('#secondary');
-    if (secondary) {
-      if (secondary.firstChild) {
-        secondary.insertBefore(desktopRoot, secondary.firstChild);
-      } else {
-        secondary.appendChild(desktopRoot);
-      }
-      setMountNode(desktopRoot);
-      return true;
-    }
-    // No #secondary element found yet
-    return false;
-  };
-
-  // Handle mounting location based on mobile/desktop
+  // Effect to handle mounting for both mobile and desktop
   useEffect(() => {
-    // Cleanup previous observer if it exists
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-      observerRef.current = null;
-    }
+    const root = document.getElementById(ROOT_ID);
+    if (!root) return;
 
     if (isMobile) {
-      const mobileRoot = document.createElement('div');
-      mobileRoot.id = ROOT_ID;
-      document.body.appendChild(mobileRoot);
-      setMountNode(mobileRoot);
-
-      return () => mobileRoot.remove();
+      // For mobile, set position fixed
+      root.style.position = 'fixed';
+      root.style.bottom = '20px';
+      root.style.right = '20px';
+      root.style.zIndex = '999999';
+      // Ensure it's in the body
+      if (root.parentElement !== document.body) {
+        document.body.appendChild(root);
+      }
     } else {
-      const desktopRoot = document.createElement('div');
-      desktopRoot.id = ROOT_ID;
+      // Reset mobile styles if they were applied
+      root.style.position = '';
+      root.style.bottom = '';
+      root.style.right = '';
+      root.style.zIndex = '';
 
-      // Initial mount attempt
-      if (!mountToSecondary(desktopRoot)) {
-        // Set up observer for #secondary
-        observerRef.current = new MutationObserver(() => {
-          if (mountToSecondary(desktopRoot)) {
-            observerRef.current?.disconnect();
+      // Desktop mounting logic
+      const secondary = document.querySelector('#secondary');
+      if (secondary) {
+        if (secondary.firstChild) {
+          secondary.insertBefore(root, secondary.firstChild);
+        } else {
+          secondary.appendChild(root);
+        }
+      } else {
+        const observer = new MutationObserver((_, obs) => {
+          const secondary = document.querySelector('#secondary');
+          if (secondary) {
+            if (secondary.firstChild) {
+              secondary.insertBefore(root, secondary.firstChild);
+            } else {
+              secondary.appendChild(root);
+            }
+            obs.disconnect();
           }
         });
 
-        observerRef.current.observe(document.body, {
+        observer.observe(document.body, {
           childList: true,
           subtree: true
         });
 
-        // Additional check for #secondary after a short delay
-        setTimeout(() => {
-          if (!mountNode && mountToSecondary(desktopRoot)) {
-            observerRef.current?.disconnect();
-          }
-        }, 1000);
-
-        // Cleanup if mounting fails
-        const timeout = setTimeout(() => {
-          if (observerRef.current) {
-            observerRef.current.disconnect();
-            observerRef.current = null;
-          }
-        }, 5000);
-
-        return () => {
-          if (observerRef.current) {
-            observerRef.current.disconnect();
-            observerRef.current = null;
-          }
-          clearTimeout(timeout);
-          desktopRoot.remove();
-        };
+        return () => observer.disconnect();
       }
-
-      return () => desktopRoot.remove();
     }
   }, [isMobile]);
-
-  // Additional effect to handle YouTube's dynamic loading
-  useEffect(() => {
-    if (!isMobile && !mountNode) {
-      const checkSecondary = () => {
-        const secondary = document.querySelector('#secondary');
-        if (secondary && !mountNode) {
-          const desktopRoot = document.createElement('div');
-          desktopRoot.id = ROOT_ID;
-          mountToSecondary(desktopRoot);
-        }
-      };
-
-      // Check multiple times with increasing delays
-      const checks = [100, 500, 1000, 2000];
-      checks.forEach(delay => {
-        setTimeout(checkSecondary, delay);
-      });
-    }
-  }, [isMobile, mountNode]);
 
   // Update videoId when URL changes
   useEffect(() => {
@@ -124,12 +76,10 @@ export const YTSummarizerRoot: React.FC = () => {
     };
   }, []);
 
-  // Only render when we have a mount node
-  return mountNode ? createPortal(
+  return (
     <YTSummarizer
       key={videoId} // Force reset on video change
       displayMode={isMobile ? 'floating' : 'tab'}
-    />,
-    mountNode
-  ) : null;
+    />
+  );
 };
