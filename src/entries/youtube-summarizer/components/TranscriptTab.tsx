@@ -150,7 +150,7 @@ export const TranscriptTab = ({
                   title="Get AI Summary"
                   onClick={generateSummary}
                   disabled={isLoading}
-                  className="flex gap-3 items-center text-gray-300 hover:text-white transition-colors text-[14px]"
+                  className="flex gap-3 items-center text-gray-200 hover:text-white transition-colors text-[14px]"
                 >
                   <Sparkles className="h-[16px] w-[16px]" />
                     Summarize
@@ -170,7 +170,7 @@ export const TranscriptTab = ({
                 {isOpen ? (
                   <button
                     title={copied ? "Copied!" : "Copy transcript"}
-                    className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
+                    className="p-2 text-gray-200 hover:text-white rounded-full transition-colors"
                     onClick={copyTranscript}
                   >
                     {copied ? (
@@ -182,7 +182,7 @@ export const TranscriptTab = ({
                 ) : (
                   <button
                     title="Extension settings"
-                    className="p-2 text-gray-300 hover:text-white rounded-full transition-colors"
+                    className="p-2 text-gray-200 hover:text-white rounded-full transition-colors"
                     onClick={openOptions}
                   >
                     <Settings className="h-7 w-7" />
