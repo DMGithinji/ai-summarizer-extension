@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Free Youtube & Web AI Summarizer",
   "version": "2.0",
-  "description": "Instantly summarize any webpage or YouTube video using your existing AI accounts (ChatGPT, Claude, or Gemini). Save time with one-click summaries - no additional subscription required.",
+  "description": "Instantly summarize any webpage or YouTube video using your existing AI accounts (ChatGPT, Claude, or Gemini) - no additional subscription required.",
   "permissions": ["activeTab", "clipboardRead", "clipboardWrite", "scripting", "storage"],
   "host_permissions": [
     "https://claude.ai/*",
