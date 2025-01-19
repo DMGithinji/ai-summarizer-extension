@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
-import { getCurrentVideoId } from '@/lib/utils';
 import useMobile from '../hooks/useMobile';
 import { ROOT_ID } from '../main';
 import { YTSummarizer } from './YTSummarizer';
 
 export const YTSummarizerRoot: React.FC = () => {
-  const [videoId, setVideoId] = useState<string | null>(null);
   const isMobile = useMobile();
 
   // Effect to handle mounting for both mobile and desktop
@@ -32,7 +30,7 @@ export const YTSummarizerRoot: React.FC = () => {
       root.style.zIndex = '';
 
       // Desktop mounting logic
-      const secondary = document.querySelector('#secondary');
+      const secondary = document.querySelector('div#secondary.style-scope.ytd-watch-flexy');
       if (secondary) {
         if (secondary.firstChild) {
           secondary.insertBefore(root, secondary.firstChild);
@@ -41,7 +39,7 @@ export const YTSummarizerRoot: React.FC = () => {
         }
       } else {
         const observer = new MutationObserver((_, obs) => {
-          const secondary = document.querySelector('#secondary');
+          const secondary = document.querySelector('div#secondary.style-scope.ytd-watch-flexy');
           if (secondary) {
             if (secondary.firstChild) {
               secondary.insertBefore(root, secondary.firstChild);
@@ -62,23 +60,9 @@ export const YTSummarizerRoot: React.FC = () => {
     }
   }, [isMobile]);
 
-  // Update videoId when URL changes
-  useEffect(() => {
-    const handleNavigation = () => {
-      setVideoId(getCurrentVideoId());
-    };
-
-    window.addEventListener('yt-navigate-finish', handleNavigation);
-    setVideoId(getCurrentVideoId()); // Initial video ID
-
-    return () => {
-      window.removeEventListener('yt-navigate-finish', handleNavigation);
-    };
-  }, []);
 
   return (
     <YTSummarizer
-      key={videoId} // Force reset on video change
       displayMode={isMobile ? 'floating' : 'tab'}
     />
   );

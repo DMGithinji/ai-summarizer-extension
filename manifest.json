@@ -29,7 +29,7 @@
         "https://gemini.google.com/*",
         "https://www.youtube.com/*",
         "https://*.google.com/*",
-        "https://youtube.com/*",
+        "https://*.youtube.com/*",
         "https://figma.com/*"
       ],
       "js": ["webSummarizer.js"]

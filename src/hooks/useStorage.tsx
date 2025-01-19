@@ -21,8 +21,6 @@ interface StorageReturnType {
 // Default values
 export const DEFAULT_AI_SERVICE = AI_SERVICES[AiServiceType.GEMINI];
 
-const DEFAULT_PROMPTS = PRECONFIGURED_PROMPTS;
-
 export function useStorage(): StorageReturnType {
   const [prompts, setPrompts] = useState<Prompt[]>(PRECONFIGURED_PROMPTS);
   const [aiUrl, setAiUrlState] = useState<string>(DEFAULT_AI_SERVICE.url);
@@ -34,7 +32,7 @@ export function useStorage(): StorageReturnType {
     const loadStorage = async () => {
       try {
         const result = await chrome.storage.sync.get({
-          prompts: DEFAULT_PROMPTS,
+          prompts: PRECONFIGURED_PROMPTS,
           aiUrl: DEFAULT_AI_SERVICE.url,
         });
         setPrompts(result.prompts);
@@ -129,9 +127,10 @@ export function useStorage(): StorageReturnType {
   const getDefaultPrompt = useCallback(async () => {
     try {
       const result = await chrome.storage.sync.get({
-        prompts: DEFAULT_PROMPTS
+        prompts: PRECONFIGURED_PROMPTS
       });
-      return result.prompts.find((prompt: Prompt) => prompt.isDefault) || DEFAULT_PROMPTS[0];
+      const selected = result.prompts.find((prompt: Prompt) => prompt.isDefault);
+      return selected || PRECONFIGURED_PROMPTS[0];
     } catch (err) {
       console.error('Failed to get default prompt:', err);
       return undefined;
@@ -167,10 +166,10 @@ export function useStorage(): StorageReturnType {
     setLoading(true);
     try {
       await saveToStorage({
-        prompts: DEFAULT_PROMPTS,
+        prompts: PRECONFIGURED_PROMPTS,
         aiUrl: DEFAULT_AI_SERVICE.url
       });
-      setPrompts(DEFAULT_PROMPTS);
+      setPrompts(PRECONFIGURED_PROMPTS);
       setAiUrlState(DEFAULT_AI_SERVICE.url);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to reset to defaults'));

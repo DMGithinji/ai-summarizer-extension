@@ -8,6 +8,8 @@ class YoutubeInitializer {
   private observer: MutationObserver | null = null;
   private root: HTMLElement | null = null;
   private reactRoot: ReturnType<typeof createRoot> | null = null;
+  private lastUrl: string | null = null;
+  private mountTimeout: number | null = null;
 
   private constructor() {
     this.setupNavigationHandler();
@@ -20,13 +22,39 @@ class YoutubeInitializer {
     return YoutubeInitializer.instance;
   }
 
-  private setupNavigationHandler() {
-    // Handle YouTube's custom navigation event
-    window.addEventListener('yt-navigate-finish', () => {
-      this.handleNavigation();
-    });
+  private setupNavigationHandler(): void {
+    if (window.location.hostname === 'm.youtube.com') {
+      // Mobile YouTube navigation handling
+      window.addEventListener('popstate', () => {
+        this.handleNavigation();
+      });
 
-    // Handle initial page load and direct URL navigation
+      if ('navigation' in window && window.navigation) {
+        (window.navigation as any).addEventListener('navigate', () => {
+          this.handleNavigation();
+        });
+      }
+
+      const titleElement = document.querySelector('head > title');
+      if (titleElement) {
+        this.observer = new MutationObserver(() => {
+          const currentUrl = window.location.href;
+          if (this.lastUrl !== currentUrl) {
+            this.lastUrl = currentUrl;
+            this.handleNavigation();
+          }
+        });
+
+        this.observer.observe(titleElement, { subtree: true, childList: true });
+      }
+    } else {
+      // Desktop YouTube navigation handling
+      window.addEventListener('yt-navigate-finish', () => {
+        this.handleNavigation();
+      });
+    }
+
+    // Handle initial page load
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => this.handleNavigation());
     } else {
@@ -34,29 +62,38 @@ class YoutubeInitializer {
     }
   }
 
-  private mountTimeout: number | null = null;
+  private isVideoPage(): boolean {
+    const url = new URL(window.location.href);
+    const isMobile = window.location.hostname === 'm.youtube.com';
+
+    // Check for video pages on both mobile and desktop
+    if (isMobile) {
+      // Mobile YouTube video pages have a 'v' parameter
+      return url.searchParams.has('v');
+    } else {
+      // Desktop YouTube video pages either start with /watch or /shorts
+      return url.pathname === '/watch';
+    }
+  }
 
   private handleNavigation() {
-    const isVideoPage = window.location.pathname === '/watch';
+    // Always unmount first when navigation occurs
+    this.unmountComponent();
 
-    if (isVideoPage) {
+    if (this.isVideoPage()) {
       // Clear any existing timeout
       if (this.mountTimeout) {
         window.clearTimeout(this.mountTimeout);
       }
 
-      // Set new timeout for mounting
-      this.mountTimeout = window.setTimeout(() => {
-        this.mountComponent();
-        this.mountTimeout = null;
-      }, 2000); // 2 second delay
+      this.mountComponent();
+      this.mountTimeout = null;
     } else {
       // Clear timeout if navigating away
       if (this.mountTimeout) {
         window.clearTimeout(this.mountTimeout);
         this.mountTimeout = null;
       }
-      this.unmountComponent();
     }
   }
 

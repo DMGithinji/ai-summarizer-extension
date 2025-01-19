@@ -5,7 +5,8 @@ import { FloatingButton } from "./FloatingButton";
 import "@/styles/index.css";
 import { TranscriptSegment } from "@/config/types";
 import { TranscriptTab } from "./TranscriptTab";
-import { formatTimestamp } from "@/lib/utils";
+import { formatTimestamp, getVideoTitle } from "@/lib/utils";
+import { PRECONFIGURED_PROMPTS } from "@/config/prompts";
 
 export function YTSummarizer({
   displayMode,
@@ -18,13 +19,6 @@ export function YTSummarizer({
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const getVideoTitle = () => {
-    const title = document.querySelector(
-      "h1.ytd-video-primary-info-renderer"
-    )?.textContent;
-    return title ? `Title: ${title}` : "";
-  };
 
   const retrieveTranscript = useCallback(async () => {
     if (transcript || isLoading) return transcript;
@@ -66,7 +60,11 @@ export function YTSummarizer({
           )
           .join("\n");
 
-        const transcriptWithPrompt = `${defaultPrompt.content}\n${title}\nTranscript:\n${transcriptString}`;
+        const prompt = defaultPrompt?.content || PRECONFIGURED_PROMPTS[0].content;
+        const transcriptWithPrompt = `Please analyze the following transcript then, ${prompt}:
+
+[Transcript]
+${title}\n${transcriptString}`;
 
         await navigator.clipboard.writeText("");
         await navigator.clipboard.writeText(transcriptWithPrompt);
