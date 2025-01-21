@@ -60,7 +60,8 @@ export function YTSummarizer({
           )
           .join("\n");
 
-        const prompt = defaultPrompt?.content || PRECONFIGURED_PROMPTS[0].content;
+        const prompt =
+          defaultPrompt?.content || PRECONFIGURED_PROMPTS[0].content;
         const transcriptWithPrompt = `Please analyze the following transcript then, ${prompt}:
 
 [Transcript]

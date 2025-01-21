@@ -2,7 +2,8 @@
 const VALID_PATHS: Record<string, string> = {
   'claude.ai': '/new',
   'chatgpt.com': '/',
-  'gemini.google.com': '/app'
+  'chat.deepseek.com': '/',
+  'gemini.google.com': '/app',
 };
 
 // Check if a URL matches any of our AI services with the extension parameter

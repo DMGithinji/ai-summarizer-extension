@@ -13,6 +13,12 @@ export const AI_SERVICES: Record<AiServiceType, AiService> = {
     url: 'https://chatgpt.com',
     icon: '/assets/icons/chatgpt-logo.png'
   },
+  [AiServiceType.DEEPSEEK]: {
+    type: AiServiceType.DEEPSEEK,
+    name: 'DeepSeek',
+    url: 'https://chat.deepseek.com',
+    icon: '/assets/icons/deepseek-logo.png'
+  },
   [AiServiceType.GEMINI]: {
     type: AiServiceType.GEMINI,
     name: 'Gemini',
