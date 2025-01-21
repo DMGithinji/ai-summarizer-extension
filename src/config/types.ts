@@ -13,7 +13,8 @@ export interface StorageData {
 export enum AiServiceType {
   CLAUDE = 'claude',
   CHATGPT = 'chatgpt',
-  GEMINI = 'gemini'
+  GEMINI = 'gemini',
+  DEEPSEEK = 'deepseek'
 }
 
 export interface AiService {

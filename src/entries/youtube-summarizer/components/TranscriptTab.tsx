@@ -128,7 +128,6 @@ export const TranscriptTab = ({
       <Accordion
         type="single"
         collapsible
-        className="w-full"
         onValueChange={handleAccordionChange}
       >
         <AccordionItem
@@ -231,7 +230,7 @@ export const TranscriptTab = ({
               </div>
             ) : (
               <div className="text-center py-8 text-gray-400">
-                Click to view transcript
+                No transcript retrieved for this video
               </div>
             )}
           </AccordionContent>

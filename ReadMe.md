@@ -11,6 +11,7 @@ Download latest version: [v2025.01.16](https://github.com/DMGithinji/ai-summariz
 - 🤖 **Multiple AI Services**: Works with:
   - OpenAI's ChatGPT
   - Anthropic's Claude
+  - DeepSeek's DeepSeek
   - Google's Gemini
 - ✨ **Customizable Prompts**: Create and manage your own summarization templates
 - 🎯 **Non-intrusive UI**: Minimal floating button that appears only when needed
