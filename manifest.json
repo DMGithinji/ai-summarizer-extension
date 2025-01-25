@@ -31,8 +31,19 @@
         "https://chat.deepseek.com/*",
         "https://www.youtube.com/*",
         "https://*.google.com/*",
+        "https://*.brave.com/*",
         "https://*.youtube.com/*",
-        "https://figma.com/*"
+        "https://figma.com/*",
+        "https://excalidraw.com/*",
+        "https://*.amazon.com/*",
+        "https://*.facebook.com/*",
+        "https://*.instagram.com/*",
+        "https://*.linkedin.com/*",
+        "https://*.microsoft.com/*",
+        "https://*.netflix.com/*",
+        "https://*.pinterest.com/*",
+        "https://*.twitch.tv/*",
+        "https://*.twitter.com/*"
       ],
       "js": ["webSummarizer.js"]
     },
