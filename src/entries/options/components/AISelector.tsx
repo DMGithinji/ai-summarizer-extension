@@ -11,7 +11,7 @@ export function AISelector() {
         Select which AI service to use for getting summaries.
       </p>
 
-      <div className="flex flex-col sm:flex-row gap-4 w-full">
+      <div className="flex flex-row gap-4 w-full">
         {Object.values(AI_SERVICES).map((service) => (
           <button
             key={service.type}
