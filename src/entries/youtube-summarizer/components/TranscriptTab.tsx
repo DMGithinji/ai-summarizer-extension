@@ -12,12 +12,12 @@ import {
   Settings,
   Loader2,
   ChevronDown,
-  Sparkles,
   CopyCheck,
   ScrollText,
   Crosshair,
 } from "lucide-react";
 import { useState, useCallback, useRef } from "react";
+import AiSelectButton from "./SummarizeButton";
 
 export const TranscriptTab = ({
   error,
@@ -132,7 +132,7 @@ export const TranscriptTab = ({
       >
         <AccordionItem
           value="transcript"
-          className="border-0 bg-black rounded-[8px] overflow-hidden w-full"
+          className="border-0 bg-neutral-800/50 rounded-[8px] overflow-hidden w-full"
         >
           <AccordionTrigger className="py-1 pl-1">
             <div className="flex  items-center justify-between w-full px-4 h-14">
@@ -145,7 +145,7 @@ export const TranscriptTab = ({
 
               <div className="flex items-center gap-3">
 
-                <button
+                {/* <button
                   title="Get AI Summary"
                   onClick={generateSummary}
                   disabled={isLoading}
@@ -153,7 +153,8 @@ export const TranscriptTab = ({
                 >
                   <Sparkles className="h-[16px] w-[16px]" />
                     Summarize
-                </button>
+                </button> */}
+                <AiSelectButton disabled={isLoading}  onSummarize={generateSummary} />
                 {isOpen ? (
                   <button
                     title="Go to current timestamp"
@@ -214,15 +215,15 @@ export const TranscriptTab = ({
                   <div
                     key={index}
                     data-index={index}
-                    className="flex gap-4 px-2 transition-all duration-300" // Add transition
+                    className="flex gap-3 px-2 transition-all duration-300" // Add transition
                     >
                     <a
                       onClick={() => handleTimestampClick(entry.start)}
-                      className="text-[14px] leading-[1.5] text-blue-500 hover:underline w-12 cursor-pointer flex-shrink-0"
+                      className="text-[14px] leading-[1.5] text-blue-500 hover:underline w-16 cursor-pointer flex-shrink-0"
                     >
                       {formatTimestamp(entry.start)}
                     </a>
-                    <p className="text-[14px] leading-[1.4] px-2">
+                    <p className="pl-1 text-[14px] leading-[1.4] flex-1">
                       {entry.text}
                     </p>
                   </div>
