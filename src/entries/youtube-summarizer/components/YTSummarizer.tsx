@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from "react";
 import { useStorage } from "@/hooks/useStorage";
-import { getVideoTranscript } from "@/lib/getTranscript";
+import { formatTimestamp, getVideoTitle, getVideoTranscript } from "../utils/getTranscript";
 import { FloatingButton } from "./FloatingButton";
 import "@/styles/index.css";
 import { TranscriptSegment } from "@/config/types";
 import { TranscriptTab } from "./TranscriptTab";
-import { formatTimestamp, getVideoTitle } from "@/lib/utils";
 import { PRECONFIGURED_PROMPTS } from "@/config/prompts";
 
 export function YTSummarizer({
@@ -63,7 +62,7 @@ export function YTSummarizer({
         const prompt =
           defaultPrompt?.content || PRECONFIGURED_PROMPTS[0].content;
         const transcriptWithPrompt = `Please analyze the following transcript then, ${prompt}
-        
+
 [Transcript]
 ${title}\n${transcriptString}`;
 

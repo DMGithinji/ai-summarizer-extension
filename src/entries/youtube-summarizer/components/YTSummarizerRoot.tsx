@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import useMobile from '../hooks/useMobile';
 import { ROOT_ID } from '../main';
 import { YTSummarizer } from './YTSummarizer';
-import { setupDesktopRoot, setupMobileRoot } from '../utils';
+import { setupDesktopRoot, setupMobileRoot } from '../utils/mountComponent';
 
 export const YTSummarizerRoot: React.FC = () => {
   const isMobile = useMobile();

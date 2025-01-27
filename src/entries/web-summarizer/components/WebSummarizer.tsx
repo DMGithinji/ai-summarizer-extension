@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useStorage } from '@/hooks/useStorage'
 import { FloatingButton } from './FloatingButton'
-import { captureText } from '@/lib/captureText '
+import { captureText } from '../utils/captureText'
 
 export function WebSummarizer() {
   const { getDefaultPrompt, aiUrl } = useStorage();

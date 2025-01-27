@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { TranscriptSegment } from "@/config/types";
-import { formatTimestamp } from "@/lib/utils";
+import { formatTimestamp } from "../utils/getTranscript";
 
 import {
   Copy,
