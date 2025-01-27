@@ -2,7 +2,7 @@
 
 A browser extension that helps you summarize web content and YouTube videos using your existing AI accounts (ChatGPT, Claude, or Gemini). No additional subscription required!
 
-Download latest version: [v2025.01.25](https://github.com/DMGithinji/ai-summarizer-extension/releases/tag/v2025.01.25)
+Download latest version: [v2025.01.27](https://github.com/DMGithinji/ai-summarizer-extension/releases/tag/v2025.01.27)
 
 ## Features
 
