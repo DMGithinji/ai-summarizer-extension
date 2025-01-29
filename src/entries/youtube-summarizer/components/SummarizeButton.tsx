@@ -29,7 +29,7 @@ const AiSelectButton = ({
 
   return (
     <div className="relative inline-flex" ref={dropdownRef}>
-      <div className="inline-flex h-10 items-stretch rounded-md bg-neutral-800/30 hover:bg-neutral-800/50 font-medium">
+      <div className="inline-flex h-11 items-stretch rounded-md hover:bg-neutral-800/50 font-medium transition-colors">
         {/* Main Button Section */}
         <button
           title={`Summarize with ${currentAi?.name}`}
