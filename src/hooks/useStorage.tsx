@@ -19,7 +19,7 @@ interface StorageReturnType {
 }
 
 // Default values
-export const DEFAULT_AI_SERVICE = AI_SERVICES[AiServiceType.GEMINI];
+export const DEFAULT_AI_SERVICE = AI_SERVICES[AiServiceType.DEEPSEEK];
 
 export function useStorage(): StorageReturnType {
   const [prompts, setPrompts] = useState<Prompt[]>(PRECONFIGURED_PROMPTS);

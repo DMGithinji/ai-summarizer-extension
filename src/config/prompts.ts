@@ -2,9 +2,19 @@ import { Prompt } from "./types";
 
 export const PRECONFIGURED_PROMPTS: Prompt[] = [
   {
+    id: 'short-form',
+    name: 'Shortform-Like Summary (Detailed)',
+    isDefault: true,
+    content: `Summarize the following how Shortlist or Blinkist would.
+Keep the tone of the content. Keep it conversational.
+Don't skip any major topics throughout the content.
+Use emojis on headers & subheaders to break up text.
+Go beyond the title in giving the summary, look through entire content.
+Sprinkle in quotes or excerpts to better link the summary to the content.`
+},
+  {
     id: '5-10-points',
     name: '5-10 Key Points',
-    isDefault: true,
     content: `Please provide the 5-10 most important points from the text.
 Use bullet points and emojis to break up the text.
 Focus on the key points and avoid summarizing everything.
@@ -22,16 +32,6 @@ Don't include any additional information, focus on the key points.`,
     - Keep the tone of the content. Be conversational. How a friend would give the summary.
 3. End with a brief takeaways`,
   },
-  {
-    id: 'short-form',
-    name: 'Shortform-Like Summary (Detailed)',
-    content: `Summarize the following how Shortlist or Blinkist would.
-Keep the tone of the content. Keep it conversational.
-Don't skip any major topics throughout the content.
-Use emojis on headers & subheaders to break up text.
-Go beyond the title in giving the summary, look through entire content.
-Sprinkle in quotes or excerpts to better link the summary to the content.`
-},
 {
   id: 'like-12',
   name: 'Simple language',

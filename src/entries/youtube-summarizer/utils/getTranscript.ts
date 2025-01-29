@@ -186,13 +186,13 @@ export const getVideoTitle = (): string => {
     const mobileTitle = document.querySelector(
       'h2.slim-video-information-title.slim-video-metadata-title-modern .yt-core-attributed-string'
     )?.textContent;
-    return mobileTitle ? `Title: ${mobileTitle}` : "";
+    return mobileTitle ? `Video Title: ${mobileTitle}` : "";
   } else {
     // Desktop YouTube title selector
     const desktopTitle = document.querySelector(
       "h1.ytd-video-primary-info-renderer"
     )?.textContent;
-    return desktopTitle ? `Title: ${desktopTitle}` : "";
+    return desktopTitle ? `Video Title: ${desktopTitle}` : "";
   }
 };
 

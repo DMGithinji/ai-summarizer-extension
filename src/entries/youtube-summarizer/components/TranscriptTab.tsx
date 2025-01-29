@@ -124,7 +124,7 @@ export const TranscriptTab = ({
   }, [transcript]);
 
   return (
-    <div className="relative z-50 mb-4 mt-2 px-1">
+    <div className="relative z-50 mb-4 px-1">
       <Accordion
         type="single"
         collapsible
@@ -132,7 +132,7 @@ export const TranscriptTab = ({
       >
         <AccordionItem
           value="transcript"
-          className="border-0 bg-neutral-800/50 rounded-[8px] overflow-hidden w-full"
+          className="border-0 bg-neutral-800/60 rounded-[8px] overflow-hidden w-full"
         >
           <AccordionTrigger className="py-1 pl-1">
             <div className="flex  items-center justify-between w-full px-4 h-14">
@@ -145,15 +145,6 @@ export const TranscriptTab = ({
 
               <div className="flex items-center gap-3">
 
-                {/* <button
-                  title="Get AI Summary"
-                  onClick={generateSummary}
-                  disabled={isLoading}
-                  className="flex gap-3 items-center text-gray-200 hover:text-white transition-colors text-[14px]"
-                >
-                  <Sparkles className="h-[16px] w-[16px]" />
-                    Summarize
-                </button> */}
                 <AiSelectButton disabled={isLoading}  onSummarize={generateSummary} />
                 {isOpen ? (
                   <button
@@ -202,14 +193,14 @@ export const TranscriptTab = ({
           <AccordionContent className="px-4 py-4">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-12 w-12 animate-spin text-blue-400" />
+                <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
               </div>
             ) : error ? (
               <div className="text-center py-8 text-red-400">{error}</div>
             ) : transcript ? (
               <div
                 ref={transcriptRef}
-                className="text-md text-gray-200 space-y-4 max-h-[500px] overflow-y-auto"
+                className="text-md text-gray-200 space-y-4 max-h-[600px] overflow-y-auto"
               >
                 {transcript.map((entry, index) => (
                   <div
@@ -218,8 +209,9 @@ export const TranscriptTab = ({
                     className="flex gap-3 px-2 transition-all duration-300" // Add transition
                     >
                     <a
+                      title='Jump to timestamp'
                       onClick={() => handleTimestampClick(entry.start)}
-                      className="text-[14px] leading-[1.5] text-blue-500 hover:underline w-16 cursor-pointer flex-shrink-0"
+                      className="text-[14px] leading-[1.5] underline w-16 cursor-pointer flex-shrink-0"
                     >
                       {formatTimestamp(entry.start)}
                     </a>

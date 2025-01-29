@@ -61,10 +61,7 @@ export function YTSummarizer({
 
         const prompt =
           defaultPrompt?.content || PRECONFIGURED_PROMPTS[0].content;
-        const transcriptWithPrompt = `Please analyze the following transcript then, ${prompt}
-
-[Transcript]
-${title}\n${transcriptString}`;
+        const transcriptWithPrompt = `Please analyze the following transcript then, ${prompt}\n\n${title}\nTranscript: ${transcriptString}`;
 
         await navigator.clipboard.writeText("");
         await navigator.clipboard.writeText(transcriptWithPrompt);
