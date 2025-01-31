@@ -16,7 +16,7 @@ import {
   ScrollText,
   Crosshair,
 } from "lucide-react";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import AiSelectButton from "./SummarizeButton";
 
 export const TranscriptTab = ({
@@ -39,6 +39,27 @@ export const TranscriptTab = ({
   const getVideoTitle = () =>
     document.querySelector("h1.ytd-video-primary-info-renderer")?.textContent ||
     "Untitled Video";
+
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Fixes issue where element is embedded on DOM while content is loading
+  // Hacky: during loading phase, the secondary element's width has no max width
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        setIsVisible(width <= 450);
+        resizeObserver.disconnect();
+      }
+    });
+
+    resizeObserver.observe(containerRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, []);
 
   const handleAccordionChange = useCallback(
     async (value: string) => {
@@ -87,11 +108,9 @@ export const TranscriptTab = ({
   }, []);
 
   const handleTimestampClick = (seconds: number) => {
-    // Get the video element
     const video = document.querySelector("video");
     if (video) {
       video.currentTime = seconds;
-      // Optional: Scroll video into view if needed
       video.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   };
@@ -133,7 +152,10 @@ export const TranscriptTab = ({
   }, [transcript]);
 
   return (
-    <div className="relative z-50 mb-4 px-1 max-w-[400px]">
+    <div
+      ref={containerRef}
+      className="relative z-50 mb-4 px-1 max-w-[500px]"
+      style={{ visibility: isVisible ? 'visible' : 'hidden' }}>
       <Accordion
         type="single"
         collapsible
