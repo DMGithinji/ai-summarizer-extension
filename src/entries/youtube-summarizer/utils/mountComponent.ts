@@ -42,7 +42,7 @@ const resetRootStyles = (root: HTMLElement) => {
 
 /**
  * Mounts the root to the secondary container if possible.
- * 
+ *
  * This is the container above the suggested play-next videos
  */
 const mountToSecondaryContainer = (root: HTMLElement): boolean => {
@@ -50,12 +50,8 @@ const mountToSecondaryContainer = (root: HTMLElement): boolean => {
     "div#secondary.style-scope.ytd-watch-flexy"
   );
 
-  if (secondary) {
-    if (secondary.firstChild) {
-      secondary.insertBefore(root, secondary.firstChild);
-    } else {
-      secondary.appendChild(root);
-    }
+  if (secondary && secondary.firstChild) {
+    secondary.insertBefore(root, secondary.firstChild);
     return true;
   }
   return false;

@@ -32,6 +32,7 @@ export const TranscriptTab = ({
   generateSummary: (e?: React.MouseEvent) => Promise<void>;
   retrieveTranscript: () => Promise<TranscriptSegment[] | null>;
 }) => {
+  const accordionContentRef = useRef<HTMLDivElement>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -42,6 +43,14 @@ export const TranscriptTab = ({
   const handleAccordionChange = useCallback(
     async (value: string) => {
       setIsOpen(value === "transcript");
+      // Set max height of content as always equal to video
+      const ytPlayer = document.querySelector('.style-scope.ytd-player');
+      if (ytPlayer && accordionContentRef.current) {
+        const height = ytPlayer.getBoundingClientRect().height;
+        const adjustedHeight = height - 60;
+        accordionContentRef.current.style.maxHeight = `${adjustedHeight}px`;
+        console.log("Set accordion height to:", adjustedHeight);
+      }
       if (value === "transcript") {
         await retrieveTranscript();
       }
@@ -124,7 +133,7 @@ export const TranscriptTab = ({
   }, [transcript]);
 
   return (
-    <div className="relative z-50 mb-4 px-1">
+    <div className="relative z-50 mb-4 px-1 max-w-[400px]">
       <Accordion
         type="single"
         collapsible
@@ -191,6 +200,7 @@ export const TranscriptTab = ({
           </AccordionTrigger>
 
           <AccordionContent className="px-4 py-4">
+            <div ref={accordionContentRef} className="overflow-y-auto">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
@@ -200,7 +210,7 @@ export const TranscriptTab = ({
             ) : transcript ? (
               <div
                 ref={transcriptRef}
-                className="text-md text-gray-200 space-y-4 max-h-[600px] overflow-y-auto"
+                className="text-md text-gray-200 space-y-4"
               >
                 {transcript.map((entry, index) => (
                   <div
@@ -226,6 +236,7 @@ export const TranscriptTab = ({
                 No transcript retrieved for this video
               </div>
             )}
+            </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
