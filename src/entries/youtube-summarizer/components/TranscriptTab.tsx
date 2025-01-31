@@ -16,7 +16,7 @@ import {
   ScrollText,
   Crosshair,
 } from "lucide-react";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import AiSelectButton from "./SummarizeButton";
 
 export const TranscriptTab = ({
@@ -39,6 +39,25 @@ export const TranscriptTab = ({
   const getVideoTitle = () =>
     document.querySelector("h1.ytd-video-primary-info-renderer")?.textContent ||
     "Untitled Video";
+
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        setIsVisible(width <= 450);
+        resizeObserver.disconnect();
+      }
+    });
+
+    resizeObserver.observe(containerRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, []);
 
   const handleAccordionChange = useCallback(
     async (value: string) => {
@@ -133,7 +152,10 @@ export const TranscriptTab = ({
   }, [transcript]);
 
   return (
-    <div className="relative z-50 mb-4 px-1 max-w-[400px]">
+    <div
+      ref={containerRef}
+      className="relative z-50 mb-4 px-1 max-w-[500px]"
+      style={{ visibility: isVisible ? 'visible' : 'hidden' }}>
       <Accordion
         type="single"
         collapsible
