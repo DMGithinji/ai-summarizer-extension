@@ -6,13 +6,14 @@ import "@/styles/index.css";
 import { TranscriptSegment } from "@/config/types";
 import { TranscriptTab } from "./TranscriptTab";
 import { PRECONFIGURED_PROMPTS } from "@/config/prompts";
+import { fitTextToContextLimit } from "@/lib/adaptiveTextSampling";
 
 export function YTSummarizer({
   displayMode,
 }: {
   displayMode: "tab" | "floating";
 }) {
-  const { getDefaultPrompt, getAiUrl } = useStorage();
+  const { getDefaultPrompt, getSummaryServiceData } = useStorage();
   const [transcript, setTranscript] = useState<TranscriptSegment[] | null>(
     null
   );
@@ -46,33 +47,35 @@ export function YTSummarizer({
       if (!currentTranscript) return;
 
       try {
-        const aiUrl = await getAiUrl();
+        const {aiUrl, shouldLimitContext} = await getSummaryServiceData();
         const defaultPrompt = await getDefaultPrompt();
 
         const title = getVideoTitle();
         const transcriptString = currentTranscript
           .map(
-            (entry) =>
-              `(${formatTimestamp(entry.start)} - ${formatTimestamp(
-                entry.end
-              )}) ${entry.text}`
+            (entry) => {
+              if (shouldLimitContext) return  entry.text;
+              return `(${formatTimestamp(entry.start)} - ${formatTimestamp(entry.end)}) ${entry.text}`
+            }
           )
-          .join("\n");
+          .join(" ");
 
-        const prompt =
-          defaultPrompt?.content || PRECONFIGURED_PROMPTS[0].content;
-        const transcriptWithPrompt = `Please analyze the following transcript then, ${prompt}\n\n${title}\nTranscript: ${transcriptString}`;
+        const textToSummarize = shouldLimitContext ? fitTextToContextLimit(transcriptString) : transcriptString
+
+        const prompt = defaultPrompt?.content || PRECONFIGURED_PROMPTS[0].content;
+        const disclaimer = 'End with a brief disclaimer that the output given is a summary of the youtube video and doesn’t cover every detail or nuance'
+        const transcriptWithPrompt = `Carefully analyze the following transcript then, ${prompt} ${disclaimer}\n\n${title}\nTranscript: ${textToSummarize}`;
 
         await navigator.clipboard.writeText("");
         await navigator.clipboard.writeText(transcriptWithPrompt);
 
-        const aiUrlWithParam = `${aiUrl}?summarize-extension`;
+        const aiUrlWithParam = `${aiUrl}?justTLDR`;
         window.open(aiUrlWithParam, "_blank");
       } catch (err) {
         console.error("Failed to generate summary:", err);
       }
     },
-    [retrieveTranscript, getDefaultPrompt, getAiUrl]
+    [retrieveTranscript, getDefaultPrompt, getSummaryServiceData]
   );
 
   const handleClose = useCallback(() => {

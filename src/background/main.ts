@@ -16,7 +16,7 @@ function isValidAiUrl(url: string): boolean {
     return Boolean(
       validPath &&
       urlObj.pathname === validPath &&
-      urlObj.searchParams.has('summarize-extension')
+      urlObj.searchParams.has('justTLDR')
     );
   } catch {
     return false;

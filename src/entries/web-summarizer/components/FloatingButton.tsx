@@ -1,11 +1,12 @@
 import { Sparkles, X } from 'lucide-react';
 
 interface FloatingButtonProps {
+  aiServiceName: string;
   onCapture: () => void;
   onClose: () => void;
 }
 
-export function FloatingButton({ onCapture, onClose }: FloatingButtonProps) {
+export function FloatingButton({ aiServiceName, onCapture, onClose }: FloatingButtonProps) {
   return (
     <div
       style={{
@@ -32,7 +33,7 @@ export function FloatingButton({ onCapture, onClose }: FloatingButtonProps) {
           transition: 'all 0.2s',
           backdropFilter: 'blur(4px)',
         }}
-        title="Summarize with AI"
+        title={`Summarize with ${aiServiceName}`}
         onMouseEnter={e => {
           e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
         }}

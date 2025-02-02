@@ -8,6 +8,7 @@ export interface Prompt {
 export interface StorageData {
   prompts: Prompt[];
   aiUrl: string;
+  isPremiumUser: boolean;
 }
 
 export enum AiServiceType {

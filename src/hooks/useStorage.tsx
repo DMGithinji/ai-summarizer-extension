@@ -1,31 +1,37 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { PRECONFIGURED_PROMPTS } from '@/config/prompts';
 import { AI_SERVICES } from '@/config/ai-services';
-import { AiServiceType, Prompt, StorageData } from '@/config/types';
+import { AiService, AiServiceType, Prompt, StorageData } from '@/config/types';
 
 interface StorageReturnType {
   prompts: Prompt[];
-  aiUrl: string;
-  loading: boolean;
-  error: Error | null;
   addPrompt: (prompt: Omit<Prompt, 'id'>) => Promise<void>;
   editPrompt: (id: string, updates: Partial<Prompt>) => Promise<void>;
   deletePrompt: (id: string) => Promise<void>;
   setDefaultPrompt: (id: string) => Promise<void>;
   getDefaultPrompt: () => Promise<Prompt>;
-  getAiUrl: () => Promise<string>;
+
+  currentAi: AiService;
+  getSummaryServiceData: () => Promise<{aiUrl: string; shouldLimitContext: boolean}>;
   setAiUrl: (url: string) => Promise<void>;
+
+  isPremiumUser: boolean,
+  setIsProUser: (isPremiumUser: boolean) => Promise<void>
+
   resetToDefaults: () => Promise<void>;
+
+  error: Error | null;
 }
 
-// Default values
-export const DEFAULT_AI_SERVICE = AI_SERVICES[AiServiceType.DEEPSEEK];
+export const DEFAULT_AI_SERVICE = AI_SERVICES[AiServiceType.CHATGPT];
 
 export function useStorage(): StorageReturnType {
   const [prompts, setPrompts] = useState<Prompt[]>(PRECONFIGURED_PROMPTS);
   const [aiUrl, setAiUrlState] = useState<string>(DEFAULT_AI_SERVICE.url);
-  const [loading, setLoading] = useState(true);
+  const [isPremiumUser, seIsPremiumUser] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+
+    const currentAi = useMemo(() => Object.values(AI_SERVICES).find(ai => ai.url === aiUrl) || DEFAULT_AI_SERVICE, [aiUrl]);
 
   // Load settings from storage
   useEffect(() => {
@@ -34,13 +40,12 @@ export function useStorage(): StorageReturnType {
         const result = await chrome.storage.sync.get({
           prompts: PRECONFIGURED_PROMPTS,
           aiUrl: DEFAULT_AI_SERVICE.url,
+          isPremiumUser: false,
         });
         setPrompts(result.prompts);
         setAiUrlState(result.aiUrl);
-        setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to load settings'));
-        setLoading(false);
       }
     };
 
@@ -57,7 +62,6 @@ export function useStorage(): StorageReturnType {
   }, []);
 
   const addPrompt = useCallback(async (prompt: Omit<Prompt, 'id'>) => {
-    setLoading(true);
     try {
       const newPrompt: Prompt = {
         ...prompt,
@@ -70,13 +74,10 @@ export function useStorage(): StorageReturnType {
       setPrompts(updatedPrompts);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to add prompt'));
-    } finally {
-      setLoading(false);
     }
   }, [prompts, saveToStorage]);
 
   const editPrompt = useCallback(async (id: string, updates: Partial<Prompt>) => {
-    setLoading(true);
     try {
       const updatedPrompts = prompts.map(prompt =>
         prompt.id === id ? { ...prompt, ...updates } : prompt
@@ -85,13 +86,10 @@ export function useStorage(): StorageReturnType {
       setPrompts(updatedPrompts);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to edit prompt'));
-    } finally {
-      setLoading(false);
     }
   }, [prompts, saveToStorage]);
 
   const deletePrompt = useCallback(async (id: string) => {
-    setLoading(true);
     try {
       const promptToDelete = prompts.find(p => p.id === id);
       if (promptToDelete?.isDefault) {
@@ -103,13 +101,10 @@ export function useStorage(): StorageReturnType {
       setPrompts(updatedPrompts);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to delete prompt'));
-    } finally {
-      setLoading(false);
     }
   }, [prompts, saveToStorage]);
 
   const setDefaultPrompt = useCallback(async (id: string) => {
-    setLoading(true);
     try {
       const updatedPrompts = prompts.map(prompt => ({
         ...prompt,
@@ -119,8 +114,6 @@ export function useStorage(): StorageReturnType {
       setPrompts(updatedPrompts);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to set default prompt'));
-    } finally {
-      setLoading(false);
     }
   }, [prompts, saveToStorage]);
 
@@ -137,59 +130,70 @@ export function useStorage(): StorageReturnType {
     }
   }, []);
 
-  // New function to get AI URL directly from storage
-  const getAiUrl = useCallback(async () => {
+  const getSummaryServiceData = useCallback(async () => {
     try {
       const result = await chrome.storage.sync.get({
-        aiUrl: DEFAULT_AI_SERVICE.url
+        aiUrl: DEFAULT_AI_SERVICE.url,
+        isPremiumUser: false
       });
-      return result.aiUrl;
+
+      const shouldLimitContext = !result.isPremiumUser && [AI_SERVICES[AiServiceType.CHATGPT].url].includes(result.aiUrl)
+      return { aiUrl, shouldLimitContext };
     } catch (err) {
       console.error('Failed to get AI URL:', err);
-      return DEFAULT_AI_SERVICE.url;
+      return { aiUrl: DEFAULT_AI_SERVICE.url, shouldLimitContext: true};
     }
   }, []);
 
   const setAiUrl = useCallback(async (url: string) => {
-    setLoading(true);
     try {
       await saveToStorage({ aiUrl: url });
       setAiUrlState(url);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to set AI URL'));
-    } finally {
-      setLoading(false);
     }
   }, [saveToStorage]);
 
+  const setIsProUser = useCallback(async (isPremiumUser: boolean) => {
+    try {
+      await saveToStorage({ isPremiumUser });
+      seIsPremiumUser(isPremiumUser);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to set AI URL'));
+    }
+  }, [saveToStorage]);
+
+
   const resetToDefaults = useCallback(async () => {
-    setLoading(true);
     try {
       await saveToStorage({
         prompts: PRECONFIGURED_PROMPTS,
-        aiUrl: DEFAULT_AI_SERVICE.url
+        aiUrl: DEFAULT_AI_SERVICE.url,
       });
       setPrompts(PRECONFIGURED_PROMPTS);
       setAiUrlState(DEFAULT_AI_SERVICE.url);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to reset to defaults'));
-    } finally {
-      setLoading(false);
     }
   }, [saveToStorage]);
 
   return {
     prompts,
-    aiUrl,
-    loading,
-    error,
+    currentAi,
     addPrompt,
     editPrompt,
     deletePrompt,
     setDefaultPrompt,
     getDefaultPrompt,
-    getAiUrl,
+
+    getSummaryServiceData,
     setAiUrl,
-    resetToDefaults
+
+    resetToDefaults,
+
+    isPremiumUser,
+    setIsProUser,
+
+    error,
   };
 }

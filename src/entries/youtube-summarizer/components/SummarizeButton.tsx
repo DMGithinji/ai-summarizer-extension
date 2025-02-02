@@ -1,7 +1,7 @@
 import { AI_SERVICES } from '@/config/ai-services';
 import { useStorage } from '@/hooks/useStorage';
 import { ChevronDown, Sparkles, Check } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const AiSelectButton = ({
   disabled,
@@ -10,10 +10,9 @@ const AiSelectButton = ({
   disabled: boolean,
   onSummarize: (e: React.MouseEvent) => Promise<void>
 }) => {
-  const { aiUrl, setAiUrl } = useStorage();
+  const { currentAi, setAiUrl } = useStorage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const currentAi = useMemo(() => Object.values(AI_SERVICES).find(ai => ai.url === aiUrl), [aiUrl]);
 
   // Handle clicking outside to close dropdown
   useEffect(() => {
@@ -57,14 +56,14 @@ const AiSelectButton = ({
       {/* Dropdown Menu */}
       {isOpen && (
         <div className="fixed z-[9999] min-w-[140px] py-1 rounded-md border border-neutral-700 bg-neutral-900 shadow-lg"
-             style={{
-               top: dropdownRef.current ?
-                 `${dropdownRef.current.getBoundingClientRect().bottom + 4}px` : '0',
-               left: dropdownRef.current ?
-                 `${dropdownRef.current.getBoundingClientRect().left}px` : '0'
-             }}
+            style={{
+              top: dropdownRef.current ?
+                `${dropdownRef.current.getBoundingClientRect().bottom + 4}px` : '0',
+              left: dropdownRef.current ?
+                `${dropdownRef.current.getBoundingClientRect().left}px` : '0'
+            }}
         >
-         {Object.values(AI_SERVICES).map((ai) => (
+        {Object.values(AI_SERVICES).map((ai) => (
             <button
               key={ai.name}
               onClick={(e) => {
@@ -75,7 +74,7 @@ const AiSelectButton = ({
               className="relative flex w-full items-center px-3 py-2.5 text-md text-white hover:bg-neutral-800 transition-colors"
             >
               <span className="pl-4 text-[12px] font-normal">{ai.name}</span>
-              {ai.url === aiUrl && (
+              {ai.url === currentAi.url && (
                 <span className="absolute right-4 text-green-500">
                   <Check className="h-6 w-6" />
                 </span>

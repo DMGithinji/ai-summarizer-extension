@@ -52,7 +52,9 @@ export const TranscriptTab = ({
       for (const entry of entries) {
         const width = entry.contentRect.width;
         setIsVisible(width <= 450);
-        resizeObserver.disconnect();
+        if (isVisible) {
+          resizeObserver.disconnect();
+        }
       }
     });
 
