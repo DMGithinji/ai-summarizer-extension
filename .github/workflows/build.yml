@@ -52,7 +52,7 @@ jobs:
 
     - name: Update README
       run: |
-        sed -i "s|Download latest version:.*|Download latest version: [v${{ steps.version.outputs.version }}](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.version }})|g" ReadMe.md
+        sed -i "s|download latest version:.*|download latest version: [v${{ steps.version.outputs.version }}](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.version }})|g" ReadMe.md
 
     - name: Commit README update
       run: |

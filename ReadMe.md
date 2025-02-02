@@ -1,8 +1,9 @@
-# Free YouTube & Web AI Summarizer
+# justTLDR: Free YouTube & Web AI Summarizer
 
 A browser extension that helps you summarize web content and YouTube videos using your existing AI accounts (ChatGPT, Claude, or Gemini). No additional subscription required!
 
-Download latest version: [v2025.01.31](https://github.com/DMGithinji/ai-summarizer-extension/releases/tag/v2025.01.31)
+Install the extension from [chrome web store](https://chromewebstore.google.com/detail/justtldr-free-ai-summariz/cmnjpgpkkdmkkmpliipnmhbelgbiefpa)
+or download latest version: [v2025.01.31](https://github.com/DMGithinji/ai-summarizer-extension/releases/tag/v2025.01.31) and install manually.
 
 ## Features
 
@@ -13,18 +14,10 @@ Download latest version: [v2025.01.31](https://github.com/DMGithinji/ai-summariz
   - Anthropic's Claude
   - DeepSeek's DeepSeek
   - Google's Gemini
-- ✨ **Customizable Prompts**: Create and manage your own summarization templates
-- 🎯 **Non-intrusive UI**: Minimal floating button that appears only when needed
+- ✨ **Adapts to free tier AI limits**: ChatGPT Free tier has character limit that extension navigates
+- 🎯 **Non-intrusive UI**: Extension attempts to be unobtrusive and adapts to Youtube's design
 
 💡 **Mobile Usage**: Want to use this extension on mobile? Install [Kiwi Browser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser&pcampaignid=web_share) from the Play Store - it supports Chrome extensions on Android! Enjoy! 😉
-
-## Quick Installation Guide
-
-1. Download the extension zip file from the link above
-2. Open Chrome and go to `chrome://extensions/`
-3. Enable "Developer mode" in the top right corner
-4. Click "Load unpacked" and select the folder where you unzipped the extension
-5. The extension icon should now appear in your Chrome toolbar!
 
 ## How to Use
 
@@ -35,7 +28,7 @@ Download latest version: [v2025.01.31](https://github.com/DMGithinji/ai-summariz
 
 2. **YouTube Summarization**:
    - Go to any YouTube video
-   - There is a transcript tab added to the right of all videos
+   - There is a transcript tab added to the right of all videos (Above suggested videos)
    - On clicking summarize, you'll be redirected to your selected AI service and get the summary based on your selected prompt
    - On expanding transcript tab, video transcript will be retrieved. You can use it to:
      - Skip to current video playback position in transcript
@@ -79,21 +72,28 @@ npm install
 npm run build
 ```
 
+4. Install extension for testing
+
+- Open Chrome and go to `chrome://extensions/`
+- Enable "Developer mode" in the top right corner
+- Click "Load unpacked" and select the dist file generated on running `npm run build`
+- The extension's options page should be opened on your browser
+
 ### Project Structure
 
 ```
 src/
 ├── background/         # Background service worker
-├── components/        # Reusable React components
-├── config/           # Configuration files
-├── entries/         # Extension entry points
+├── components/         # Reusable react components
+├── config/             # Extension configuration files
+├── entries/            # Extension entry points
 │   ├── ai-paste-handler/   # AI service integration
 │   ├── options/            # Extension options page
 │   ├── web-summarizer/     # Web content summarizer
 │   └── youtube-summarizer/ # YouTube content summarizer
-├── hooks/           # Custom React hooks
-├── lib/            # Utility functions
-└── styles/        # Global styles
+├── hooks/           # Has extension's state hook used by all services.
+├── lib/             # Utility functions
+└── styles/          # Global styles
 ```
 
 ### Tech Stack
@@ -105,4 +105,4 @@ src/
 
 ---
 
-Built to maximize the potential of the common AI tools we're given for free. 🚀
+Built to increase productivity and maximize how we benefit from the AI tools we're given for free. 🚀
