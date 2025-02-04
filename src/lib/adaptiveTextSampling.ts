@@ -6,7 +6,7 @@ interface TranscriptLimiterConfig {
 }
 
 const DEFAULT_CONFIG: TranscriptLimiterConfig = {
-  maxLength: 22500, // at 22500 exceeds chatgpts free tier character limit. Determined by trial & error
+  maxLength: 20000, // at 20000 exceeds chatgpts free tier character limit. Determined by trial & error
   initialContentRatio: 0.4,
   chunkSize: 300, // approximately 15 seconds of words
   minChunksPerSegment: 3,

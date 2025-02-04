@@ -1,16 +1,23 @@
-import { useCallback } from 'react'
-import { useStorage } from '@/hooks/useStorage'
+import { useCallback, useState } from 'react'
+import { getDefaultPrompt, getSummaryServiceData, useStorage } from '@/hooks/useStorage'
 import { FloatingButton } from './FloatingButton'
 import { captureText } from '../utils/captureText'
 import { fitTextToContextLimit } from '@/lib/adaptiveTextSampling';
+import { AI_SERVICES } from '@/config/ai-services';
 
 export function WebSummarizer() {
-  const { currentAi, getDefaultPrompt, getSummaryServiceData } = useStorage();
+  const { currentAi } = useStorage();
+  const [aiUrlName, setAiUrlName] = useState<string>(currentAi.name);
+  const getCurrentAiName = useCallback(async () => {
+    const { aiUrl } = await getSummaryServiceData();
+    const name = Object.values(AI_SERVICES).find(ai => ai.url === aiUrl)?.name || 'ChatGPT';
+    setAiUrlName(name);
+  }, []);
 
 
   const captureAndNavigate = useCallback(async () => {
     try {
-      const { aiUrl, shouldLimitContext } = await getSummaryServiceData();
+      const { shouldLimitContext, aiUrl } = await getSummaryServiceData();
 
       // Get and process prompt
       const defaultPrompt = await getDefaultPrompt();
@@ -31,7 +38,7 @@ export function WebSummarizer() {
     } catch (err) {
       console.error('Failed to capture text:', err)
     }
-  }, [getSummaryServiceData, getDefaultPrompt])
+  }, [])
 
   const handleClose = useCallback(() => {
     const rootElement = document.getElementById('web-summarizer-root')
@@ -40,5 +47,10 @@ export function WebSummarizer() {
     }
   }, [])
 
-  return <FloatingButton aiServiceName={currentAi.name} onCapture={captureAndNavigate} onClose={handleClose} />
+  return <FloatingButton
+    onCapture={captureAndNavigate}
+    onClose={handleClose}
+    onGetAiName={getCurrentAiName}
+    aiUrlName={aiUrlName}
+  />
 }

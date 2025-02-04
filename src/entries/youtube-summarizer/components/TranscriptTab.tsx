@@ -72,7 +72,6 @@ export const TranscriptTab = ({
         const height = ytPlayer.getBoundingClientRect().height;
         const adjustedHeight = height - 60;
         accordionContentRef.current.style.maxHeight = `${adjustedHeight}px`;
-        console.log("Set accordion height to:", adjustedHeight);
       }
       if (value === "transcript") {
         await retrieveTranscript();

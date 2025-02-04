@@ -2,9 +2,16 @@ import { Prompt } from "./types";
 
 export const PRECONFIGURED_PROMPTS: Prompt[] = [
   {
+    id: 'like-12',
+    name: 'Simple language',
+    isDefault: true,
+    content: `Explain the following text to me like I am 12 years old.
+  Break the text up using relevant dynamic emojis.
+  Don't explain obvious stuff.`,
+  },
+  {
     id: 'short-form',
     name: 'Shortform-Like Summary (Detailed)',
-    isDefault: true,
     content: `Summarize the following how Shortlist or Blinkist would.
 Keep the tone of the content. Keep it conversational.
 Don't skip any major topics throughout the content.
@@ -32,11 +39,4 @@ Don't include any additional information, focus on the key points.`,
     - Keep the tone of the content. Be conversational. How a friend would give the summary.
 3. End with a brief takeaways`,
   },
-{
-  id: 'like-12',
-  name: 'Simple language',
-  content: `Explain the following text to me like I am 12 years old.
-Break the text up using relevant dynamic emojis.
-Don't explain obvious stuff.`,
-},
 ]
