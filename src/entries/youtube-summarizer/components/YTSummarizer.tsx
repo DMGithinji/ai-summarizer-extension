@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useStorage } from "@/hooks/useStorage";
+import { getDefaultPrompt, getSummaryServiceData } from "@/hooks/useStorage";
 import { formatTimestamp, getVideoTitle, getVideoTranscript } from "../utils/getTranscript";
 import { FloatingButton } from "./FloatingButton";
 import "@/styles/index.css";
@@ -13,7 +13,6 @@ export function YTSummarizer({
 }: {
   displayMode: "tab" | "floating";
 }) {
-  const { getDefaultPrompt, getSummaryServiceData } = useStorage();
   const [transcript, setTranscript] = useState<TranscriptSegment[] | null>(
     null
   );
@@ -75,7 +74,7 @@ export function YTSummarizer({
         console.error("Failed to generate summary:", err);
       }
     },
-    [retrieveTranscript, getDefaultPrompt, getSummaryServiceData]
+    [retrieveTranscript]
   );
 
   const handleClose = useCallback(() => {

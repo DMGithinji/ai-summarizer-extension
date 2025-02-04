@@ -9,17 +9,11 @@ interface StorageReturnType {
   editPrompt: (id: string, updates: Partial<Prompt>) => Promise<void>;
   deletePrompt: (id: string) => Promise<void>;
   setDefaultPrompt: (id: string) => Promise<void>;
-  getDefaultPrompt: () => Promise<Prompt>;
-
   currentAi: AiService;
-  getSummaryServiceData: () => Promise<{aiUrl: string; shouldLimitContext: boolean}>;
   setAiUrl: (url: string) => Promise<void>;
-
-  isPremiumUser: boolean,
-  setIsProUser: (isPremiumUser: boolean) => Promise<void>
-
+  isPremiumUser: boolean;
+  setIsProUser: (isPremiumUser: boolean) => Promise<void>;
   resetToDefaults: () => Promise<void>;
-
   error: Error | null;
 }
 
@@ -31,7 +25,7 @@ export function useStorage(): StorageReturnType {
   const [isPremiumUser, seIsPremiumUser] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-    const currentAi = useMemo(() => Object.values(AI_SERVICES).find(ai => ai.url === aiUrl) || DEFAULT_AI_SERVICE, [aiUrl]);
+  const currentAi = useMemo(() => Object.values(AI_SERVICES).find(ai => ai.url === aiUrl) || DEFAULT_AI_SERVICE, [aiUrl]);
 
   // Load settings from storage
   useEffect(() => {
@@ -44,6 +38,7 @@ export function useStorage(): StorageReturnType {
         });
         setPrompts(result.prompts);
         setAiUrlState(result.aiUrl);
+        seIsPremiumUser(result.isPremiumUser);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to load settings'));
       }
@@ -117,34 +112,6 @@ export function useStorage(): StorageReturnType {
     }
   }, [prompts, saveToStorage]);
 
-  const getDefaultPrompt = useCallback(async () => {
-    try {
-      const result = await chrome.storage.sync.get({
-        prompts: PRECONFIGURED_PROMPTS
-      });
-      const selected = result.prompts.find((prompt: Prompt) => prompt.isDefault);
-      return selected || PRECONFIGURED_PROMPTS[0];
-    } catch (err) {
-      console.error('Failed to get default prompt:', err);
-      return undefined;
-    }
-  }, []);
-
-  const getSummaryServiceData = useCallback(async () => {
-    try {
-      const result = await chrome.storage.sync.get({
-        aiUrl: DEFAULT_AI_SERVICE.url,
-        isPremiumUser: false
-      });
-
-      const shouldLimitContext = !result.isPremiumUser && [AI_SERVICES[AiServiceType.CHATGPT].url].includes(result.aiUrl)
-      return { aiUrl, shouldLimitContext };
-    } catch (err) {
-      console.error('Failed to get AI URL:', err);
-      return { aiUrl: DEFAULT_AI_SERVICE.url, shouldLimitContext: true};
-    }
-  }, []);
-
   const setAiUrl = useCallback(async (url: string) => {
     try {
       await saveToStorage({ aiUrl: url });
@@ -184,9 +151,7 @@ export function useStorage(): StorageReturnType {
     editPrompt,
     deletePrompt,
     setDefaultPrompt,
-    getDefaultPrompt,
 
-    getSummaryServiceData,
     setAiUrl,
 
     resetToDefaults,
@@ -197,3 +162,31 @@ export function useStorage(): StorageReturnType {
     error,
   };
 }
+
+export const getSummaryServiceData = async () => {
+  try {
+    const result = await chrome.storage.sync.get({
+      isPremiumUser: false,
+      aiUrl: AI_SERVICES[AiServiceType.CHATGPT].url,
+    });
+
+    const shouldLimitContext = !result.isPremiumUser && [AI_SERVICES[AiServiceType.CHATGPT].url].includes(result.aiUrl)
+    return { aiUrl: result.aiUrl, shouldLimitContext };
+  } catch (err) {
+    console.error('Failed to get AI URL:', err);
+    return { aiUrl: DEFAULT_AI_SERVICE.url, shouldLimitContext: true};
+  }
+};
+
+export const getDefaultPrompt = async () => {
+  try {
+    const result = await chrome.storage.sync.get({
+      prompts: PRECONFIGURED_PROMPTS
+    });
+    const selected = result.prompts.find((prompt: Prompt) => prompt.isDefault);
+    return selected || PRECONFIGURED_PROMPTS[0];
+  } catch (err) {
+    console.error('Failed to get default prompt:', err);
+    return undefined;
+  }
+};
