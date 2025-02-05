@@ -15,7 +15,7 @@ const SUBMIT_DELAY = 750; // ms to wait before submitting
 const EDITOR_SELECTORS = {
   [AiServiceType.CLAUDE]: 'div[contenteditable="true"].ProseMirror',
   [AiServiceType.CHATGPT]: 'div[contenteditable="true"].ProseMirror',
-  [AiServiceType.GEMINI]: '.ql-editor[contenteditable="true"]',
+  [AiServiceType.GEMINI]: 'div[contenteditable="true"][class*="textarea"]',
   [AiServiceType.DEEPSEEK]: '#chat-input'
 } as const;
 
@@ -141,6 +141,8 @@ function submitForm(editor: HTMLElement, service: AiServiceType) {
       if (sendButton) {
         (sendButton as HTMLButtonElement).click();
         return;
+      } else {
+        alert('Press "Shift + Enter" (Windows) or "Control + Enter" (Mac) to submit! 😉');
       }
     }
 
