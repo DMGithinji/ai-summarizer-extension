@@ -9,6 +9,7 @@ export interface StorageData {
   prompts: Prompt[];
   aiUrl: string;
   isPremiumUser: boolean;
+  excludedSites: string[];
 }
 
 export enum AiServiceType {

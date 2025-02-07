@@ -11,10 +11,10 @@ export function FloatingButton({ onCapture, onClose, aiUrlName, onGetAiName }: F
   return (
     <div
       style={{
-        position: 'fixed', // Ensure it's fixed to the viewport
-        bottom: '20px', // Bottom padding
-        right: '36px', // Right padding
-        zIndex: 999999, // High z-index to stay above other elements
+        position: 'fixed',
+        bottom: '20px',
+        right: '36px',
+        zIndex: 999999,
       }}
     >
       <button
@@ -34,13 +34,23 @@ export function FloatingButton({ onCapture, onClose, aiUrlName, onGetAiName }: F
           transition: 'all 0.2s',
           backdropFilter: 'blur(4px)',
         }}
-        title={`Get ${aiUrlName || 'AI'} Summary`}
-        onMouseEnter={e => {
+        title={`Get ${aiUrlName} Summary`}
+        onMouseEnter={(e) => {
           onGetAiName();
           e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+          // Show close button on parent hover
+          const closeButton = e.currentTarget.querySelector('.close-button') as HTMLElement;
+          if (closeButton) {
+            closeButton.style.opacity = '0.7';
+          }
         }}
-        onMouseLeave={e => {
+        onMouseLeave={(e) => {
           e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+          // Hide close button when leaving parent
+          const closeButton = e.currentTarget.querySelector('.close-button') as HTMLElement;
+          if (closeButton) {
+            closeButton.style.opacity = '0';
+          }
         }}
       >
         <Sparkles
@@ -52,6 +62,7 @@ export function FloatingButton({ onCapture, onClose, aiUrlName, onGetAiName }: F
         />
 
         <button
+          className="close-button"
           onClick={(e) => {
             e.stopPropagation();
             onClose();
@@ -62,7 +73,7 @@ export function FloatingButton({ onCapture, onClose, aiUrlName, onGetAiName }: F
             right: '-4px',
             width: '12px',
             height: '12px',
-            backgroundColor: 'rgba(243, 244, 246, 0.5)', // Transparent background
+            backgroundColor: 'rgba(243, 244, 246, 0.5)',
             border: '1px solid transparent',
             borderRadius: '9999px',
             display: 'flex',
@@ -71,23 +82,19 @@ export function FloatingButton({ onCapture, onClose, aiUrlName, onGetAiName }: F
             cursor: 'pointer',
             transition: 'all 0.2s',
             padding: '1px',
-            opacity: 0.7,
+            opacity: 0,
           }}
-          onMouseEnter={e => {
-            e.currentTarget.style.backgroundColor = '#fff'; // Solid background on hover
-            e.currentTarget.style.opacity = '1'; // Fully visible
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#fff';
+            e.currentTarget.style.opacity = '1';
             e.currentTarget.style.transform = 'scale(1.1)';
           }}
-          onMouseLeave={e => {
-            e.currentTarget.style.backgroundColor = 'rgba(243, 244, 246, 0.7)'; // Reset to transparent
-            e.currentTarget.style.opacity = '0.5'; // Partially visible
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(243, 244, 246, 0.7)';
+            e.currentTarget.style.opacity = '0.7';
             e.currentTarget.style.transform = 'scale(1)';
           }}
-          onMouseOver={e => {
-            e.currentTarget.style.opacity = '1'; // Fully visible when hovering over the parent
-          }}
           title="Remove button"
-          className="group-hover:opacity-50" // CSS helper for hover state visibility
         >
           <X
             style={{

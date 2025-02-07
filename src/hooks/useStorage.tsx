@@ -4,6 +4,7 @@ import { AI_SERVICES } from '@/config/ai-services';
 import { AiService, AiServiceType, Prompt, StorageData } from '@/config/types';
 
 interface StorageReturnType {
+  hasLoaded: boolean;
   prompts: Prompt[];
   addPrompt: (prompt: Omit<Prompt, 'id'>) => Promise<void>;
   editPrompt: (id: string, updates: Partial<Prompt>) => Promise<void>;
@@ -13,6 +14,8 @@ interface StorageReturnType {
   setAiUrl: (url: string) => Promise<void>;
   isPremiumUser: boolean;
   setIsProUser: (isPremiumUser: boolean) => Promise<void>;
+  excludedSites: string[];
+  updateExcludedSites: (sites: string[] | string) => Promise<void>;
   resetToDefaults: () => Promise<void>;
   error: Error | null;
 }
@@ -23,6 +26,8 @@ export function useStorage(): StorageReturnType {
   const [prompts, setPrompts] = useState<Prompt[]>(PRECONFIGURED_PROMPTS);
   const [aiUrl, setAiUrlState] = useState<string>(DEFAULT_AI_SERVICE.url);
   const [isPremiumUser, seIsPremiumUser] = useState<boolean>(false);
+  const [excludedSites, setExcludedSites] = useState<string[]>([]);
+  const [hasLoaded, setHasLoaded] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
   const currentAi = useMemo(() => Object.values(AI_SERVICES).find(ai => ai.url === aiUrl) || DEFAULT_AI_SERVICE, [aiUrl]);
@@ -35,10 +40,13 @@ export function useStorage(): StorageReturnType {
           prompts: PRECONFIGURED_PROMPTS,
           aiUrl: DEFAULT_AI_SERVICE.url,
           isPremiumUser: false,
+          excludedSites: []
         });
         setPrompts(result.prompts);
         setAiUrlState(result.aiUrl);
         seIsPremiumUser(result.isPremiumUser);
+        setExcludedSites(result.excludedSites)
+        setHasLoaded(true);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to load settings'));
       }
@@ -130,12 +138,24 @@ export function useStorage(): StorageReturnType {
     }
   }, [saveToStorage]);
 
+  const updateExcludedSites = useCallback(async (latestExcludedSites: string[] | string) => {
+    try {
+      const excluded = Array.isArray(latestExcludedSites) ? latestExcludedSites : [...excludedSites, latestExcludedSites]
+      await saveToStorage({ excludedSites: excluded });
+      setExcludedSites(excluded);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to update excluded sites'));
+    }
+  }, [excludedSites, saveToStorage]);
+
 
   const resetToDefaults = useCallback(async () => {
     try {
       await saveToStorage({
         prompts: PRECONFIGURED_PROMPTS,
         aiUrl: DEFAULT_AI_SERVICE.url,
+        isPremiumUser: false,
+        excludedSites: []
       });
       setPrompts(PRECONFIGURED_PROMPTS);
       setAiUrlState(DEFAULT_AI_SERVICE.url);
@@ -145,6 +165,7 @@ export function useStorage(): StorageReturnType {
   }, [saveToStorage]);
 
   return {
+    hasLoaded,
     prompts,
     currentAi,
     addPrompt,
@@ -158,6 +179,9 @@ export function useStorage(): StorageReturnType {
 
     isPremiumUser,
     setIsProUser,
+
+    excludedSites,
+    updateExcludedSites,
 
     error,
   };

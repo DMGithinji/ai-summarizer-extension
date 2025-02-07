@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "justTLDR: Free AI Summarizer for YouTube and Web",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Instantly summarize webpages or YouTube video using your existing AI accounts (ChatGPT, etc) - no additional subscription required!",
   "permissions": ["activeTab", "clipboardRead", "clipboardWrite", "storage"],
   "host_permissions": [
@@ -30,21 +30,9 @@
         "https://chatgpt.com/*",
         "https://gemini.google.com/*",
         "https://chat.deepseek.com/*",
-        "https://www.youtube.com/*",
         "https://*.google.com/*",
         "https://*.brave.com/*",
-        "https://*.youtube.com/*",
-        "https://figma.com/*",
-        "https://excalidraw.com/*",
-        "https://*.amazon.com/*",
-        "https://*.facebook.com/*",
-        "https://*.instagram.com/*",
-        "https://*.linkedin.com/*",
-        "https://*.microsoft.com/*",
-        "https://*.netflix.com/*",
-        "https://*.pinterest.com/*",
-        "https://*.twitch.tv/*",
-        "https://*.twitter.com/*"
+        "https://*.youtube.com/*"
       ],
       "js": ["webSummarizer.js"]
     },

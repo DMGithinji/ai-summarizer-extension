@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { getDefaultPrompt, getSummaryServiceData, useStorage } from '@/hooks/useStorage'
 import { FloatingButton } from './FloatingButton'
 import { captureText } from '../utils/captureText'
@@ -6,7 +6,7 @@ import { fitTextToContextLimit } from '@/lib/adaptiveTextSampling';
 import { AI_SERVICES } from '@/config/ai-services';
 
 export function WebSummarizer() {
-  const { currentAi } = useStorage();
+  const { hasLoaded, currentAi, excludedSites, updateExcludedSites } = useStorage();
   const [aiUrlName, setAiUrlName] = useState<string>(currentAi.name);
   const getCurrentAiName = useCallback(async () => {
     const { aiUrl } = await getSummaryServiceData();
@@ -14,12 +14,14 @@ export function WebSummarizer() {
     setAiUrlName(name);
   }, []);
 
+  const showButton = useMemo(() => {
+    const currentDomain = getBaseDomain();
+    return !excludedSites.includes(currentDomain)
+  }, [excludedSites])
 
   const captureAndNavigate = useCallback(async () => {
     try {
       const { shouldLimitContext, aiUrl } = await getSummaryServiceData();
-
-      // Get and process prompt
       const defaultPrompt = await getDefaultPrompt();
       const capturedText = await captureText();
 
@@ -28,11 +30,9 @@ export function WebSummarizer() {
       const pasteContent = `${defaultPrompt.content}${disclaimer}\n\nContent: ${content}`
       const processedPrompt = shouldLimitContext ? fitTextToContextLimit(pasteContent) : `${pasteContent}`
 
-      // Copy to clipboard
       await navigator.clipboard.writeText('')
       await navigator.clipboard.writeText(processedPrompt)
 
-      // Open AI service in new tab
       const aiUrlWithParam = `${aiUrl}?justTLDR`
       window.open(aiUrlWithParam, '_blank')
     } catch (err) {
@@ -40,12 +40,17 @@ export function WebSummarizer() {
     }
   }, [])
 
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback(async () => {
     const rootElement = document.getElementById('web-summarizer-root')
     if (rootElement) {
       rootElement.remove()
     }
-  }, [])
+    const domain = getBaseDomain();
+    await updateExcludedSites(domain);
+    alert(`"Summarize with AI" button removed on ${domain}. You can re-enable it anytime in the extension settings.`)
+  }, [updateExcludedSites]);
+
+  if (!hasLoaded || !showButton) return;
 
   return <FloatingButton
     onCapture={captureAndNavigate}
@@ -53,4 +58,15 @@ export function WebSummarizer() {
     onGetAiName={getCurrentAiName}
     aiUrlName={aiUrlName}
   />
+}
+
+function getBaseDomain() {
+  const url = window.location.href;
+  const { hostname, port } = new URL(url);
+
+  if (hostname === 'localhost') {
+    return port ? `localhost:${port}` : 'localhost';
+  }
+
+  return hostname.replace(/^www\./, '');
 }

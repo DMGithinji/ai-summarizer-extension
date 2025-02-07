@@ -1,4 +1,5 @@
 import { AISelector } from "./AISelector";
+import { ManageExcludedSites } from "./ManageExcludedSites";
 import { PromptSelector } from "./PromptSelector";
 
 export function Options() {
@@ -8,6 +9,7 @@ export function Options() {
         <div className="max-w-4xl mx-auto py-8 space-y-8">
           <AISelector />
           <PromptSelector />
+          <ManageExcludedSites />
         </div>
       </div>
     </div>
