@@ -5,9 +5,9 @@ export const PRECONFIGURED_PROMPTS: Prompt[] = [
     id: 'like-12',
     name: 'Simple language',
     isDefault: true,
-    content: `Explain the following text to me like I am 12 years old.
-  Break the text up using relevant dynamic emojis.
-  Don't explain obvious stuff.`,
+    content: `Carefully analyze the following transcript then, Explain the following text to me like I am 12 years old (I am not though). I mean use simple, clear, conversational language that's easy to understand.
+Break the text up using relevant dynamic emojis. Avoid long paragraphs.
+Don't explain obvious stuff.`,
   },
   {
     id: 'short-form',

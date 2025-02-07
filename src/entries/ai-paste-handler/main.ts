@@ -141,8 +141,6 @@ function submitForm(editor: HTMLElement, service: AiServiceType) {
       if (sendButton) {
         (sendButton as HTMLButtonElement).click();
         return;
-      } else {
-        alert('Hit "Backspace" then "Enter" to submit! 😉');
       }
     }
 
