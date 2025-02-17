@@ -65,8 +65,10 @@ export function YTSummarizer({
         const disclaimer = 'End with a brief disclaimer that the output given is a summary of the youtube video and doesn’t cover every detail or nuance'
         const transcriptWithPrompt = `Carefully analyze the following transcript then, ${prompt} ${disclaimer}\n\n${title}\nTranscript: ${textToSummarize}`;
 
-        await navigator.clipboard.writeText("");
-        await navigator.clipboard.writeText(transcriptWithPrompt);
+        await chrome.runtime.sendMessage({
+          type: 'STORE_TEXT',
+          text: transcriptWithPrompt
+        });
 
         const aiUrlWithParam = `${aiUrl}?justTLDR`;
         window.open(aiUrlWithParam, "_blank");

@@ -1,18 +1,17 @@
 {
   "manifest_version": 3,
   "name": "justTLDR: Free AI Summarizer for YouTube and Web",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "Instantly summarize webpages or YouTube video using your existing AI accounts (ChatGPT, etc) - no additional subscription required!",
-  "permissions": ["activeTab", "clipboardRead", "clipboardWrite", "storage"],
+  "permissions": ["activeTab", "storage"],
   "host_permissions": [
     "https://claude.ai/*",
     "https://chatgpt.com/*",
     "https://gemini.google.com/*",
-    "https://chat.deepseek.com/*",
-    "https://*.youtube.com/*",
-    "https://m.youtube.com/*"
+    "https://chat.deepseek.com/*"
   ],
   "options_page": "options.html",
+
   "icons": {
     "48": "assets/icons/icon48.png"
   },

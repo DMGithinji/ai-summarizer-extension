@@ -30,8 +30,10 @@ export function WebSummarizer() {
       const pasteContent = `${defaultPrompt.content}${disclaimer}\n\nContent: ${content}`
       const processedPrompt = shouldLimitContext ? fitTextToContextLimit(pasteContent) : `${pasteContent}`
 
-      await navigator.clipboard.writeText('')
-      await navigator.clipboard.writeText(processedPrompt)
+      await chrome.runtime.sendMessage({
+        type: 'STORE_TEXT',
+        text: processedPrompt
+      });
 
       const aiUrlWithParam = `${aiUrl}?justTLDR`
       window.open(aiUrlWithParam, '_blank')
