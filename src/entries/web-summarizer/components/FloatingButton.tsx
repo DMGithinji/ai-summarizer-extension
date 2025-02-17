@@ -1,13 +1,20 @@
-import { Sparkles, X } from 'lucide-react';
+import { Sparkles, X, Settings } from 'lucide-react';
 
 interface FloatingButtonProps {
   onCapture: () => void;
   onClose: () => void;
+  onSettings: () => void;
   aiUrlName: string;
   onGetAiName: () => Promise<void>;
 }
 
-export function FloatingButton({ onCapture, onClose, aiUrlName, onGetAiName }: FloatingButtonProps) {
+export function FloatingButton({
+  onCapture,
+  onClose,
+  onSettings,
+  aiUrlName,
+  onGetAiName
+}: FloatingButtonProps) {
   return (
     <div
       style={{
@@ -38,19 +45,19 @@ export function FloatingButton({ onCapture, onClose, aiUrlName, onGetAiName }: F
         onMouseEnter={(e) => {
           onGetAiName();
           e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
-          // Show close button on parent hover
-          const closeButton = e.currentTarget.querySelector('.close-button') as HTMLElement;
-          if (closeButton) {
-            closeButton.style.opacity = '0.7';
-          }
+          // Show floating buttons on parent hover
+          const buttons = e.currentTarget.querySelectorAll('.floating-button') as NodeListOf<HTMLElement>;
+          buttons.forEach(button => {
+            button.style.opacity = '0.7';
+          });
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-          // Hide close button when leaving parent
-          const closeButton = e.currentTarget.querySelector('.close-button') as HTMLElement;
-          if (closeButton) {
-            closeButton.style.opacity = '0';
-          }
+          // Hide floating buttons when leaving parent
+          const buttons = e.currentTarget.querySelectorAll('.floating-button') as NodeListOf<HTMLElement>;
+          buttons.forEach(button => {
+            button.style.opacity = '0';
+          });
         }}
       >
         <Sparkles
@@ -61,8 +68,54 @@ export function FloatingButton({ onCapture, onClose, aiUrlName, onGetAiName }: F
           }}
         />
 
+        {/* Settings Button */}
         <button
-          className="close-button"
+          className="floating-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSettings?.();
+          }}
+          style={{
+            position: 'absolute',
+            bottom: '-4px',
+            right: '-4px',
+            width: '16px',
+            height: '16px',
+            backgroundColor: 'rgba(243, 244, 246, 0.5)',
+            border: '1px solid transparent',
+            borderRadius: '9999px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            padding: '1px',
+            opacity: 0,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#fff';
+            e.currentTarget.style.opacity = '1';
+            e.currentTarget.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(243, 244, 246, 0.7)';
+            e.currentTarget.style.opacity = '0.7';
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+          title="Settings"
+        >
+          <Settings
+            style={{
+              width: '10px',
+              height: '10px',
+              color: '#6B7280',
+            }}
+          />
+        </button>
+
+        {/* Close Button */}
+        <button
+          className="floating-button"
           onClick={(e) => {
             e.stopPropagation();
             onClose();
@@ -71,8 +124,8 @@ export function FloatingButton({ onCapture, onClose, aiUrlName, onGetAiName }: F
             position: 'absolute',
             top: '-4px',
             right: '-4px',
-            width: '12px',
-            height: '12px',
+            width: '16px',
+            height: '16px',
             backgroundColor: 'rgba(243, 244, 246, 0.5)',
             border: '1px solid transparent',
             borderRadius: '9999px',

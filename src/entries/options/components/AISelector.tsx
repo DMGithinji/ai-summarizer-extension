@@ -1,6 +1,6 @@
-import { useStorage } from '@/hooks/useStorage';
-import { AI_SERVICES } from '@/config/ai-services';
-import { AiServiceType } from '@/config/types';
+import { useStorage } from "@/hooks/useStorage";
+import { AI_SERVICES } from "@/config/ai-services";
+import { AiServiceType } from "@/config/types";
 
 export function AISelector() {
   const { currentAi, setAiUrl, isPremiumUser, setIsProUser } = useStorage();
@@ -12,15 +12,15 @@ export function AISelector() {
         Select which AI service to use for getting summaries.
       </p>
 
-      <div className="flex flex-row gap-4 w-full">
-        {Object.values(AI_SERVICES).map((service) => (
+      <div className="flex flex-wrap sm:flex-nowrap gap-4 w-full max-w-6xl mx-auto">
+      {Object.values(AI_SERVICES).map((service) => (
           <button
             key={service.type}
             onClick={() => setAiUrl(service.url)}
             className={`relative flex flex-col items-center p-4 bg-neutral-800/50 rounded-lg border transition-all flex-1 hover:bg-neutral-800 ${
               currentAi.url === service.url
-                ? 'border-green-500 bg-neutral-800'
-                : 'border-neutral-700 hover:border-neutral-600'
+                ? "border-green-500 bg-neutral-800"
+                : "border-neutral-700 hover:border-neutral-600"
             }`}
           >
             <img
@@ -49,9 +49,13 @@ export function AISelector() {
             <span className="text-white text-base">ChatGPT Plus User</span>
           </label>
           <p className="text-neutral-400 text-sm">
-            ChatGPT has a character limit on the free tier.<br/>
-            For longer content, the extension strategically samples the text to preserve the context and meaning.<br/>
-            If you're a plus user or the content is within the limit, the entire text will be used for the most comprehensive summary possible!
+            ChatGPT has a character limit on the free tier.
+            <br />
+            For longer content, the extension strategically samples the text to
+            preserve the context and meaning.
+            <br />
+            If you're a plus user or the content is within the limit, the entire
+            text will be used for the most comprehensive summary possible!
           </p>
         </div>
       )}
