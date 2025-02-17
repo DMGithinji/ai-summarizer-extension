@@ -12,7 +12,7 @@ interface Chapter {
 export function extractBasicInfo(text: string): VideoBasicInfo {
   // Find microformat section
   const findSimpleText = (key: string): string => {
-    const regex = new RegExp(`"${key}":\\s*{\\s*"simpleText":\\s*"([^"]+)"`, 'i');
+    const regex = new RegExp(`"${key}":\\s*{\\s*"simpleText":\\s*"((?:\\\\"|[^"])*)"`, 'i');
     const match = text.match(regex);
     if (match && match[1]) {
       return match[1]
@@ -56,7 +56,13 @@ export function extractChapters(description: string): string {
     /^\((?:\d{1,2}:)?\d{2}:\d{2}\)\s+.+$/gm,
 
     // Pattern 3: "[00:00] Chapter Title" or "[00:00:00] Chapter Title"
-    /^\[(?:\d{1,2}:)?\d{2}:\d{2}\]\s+.+$/gm
+    /^\[(?:\d{1,2}:)?\d{2}:\d{2}\]\s+.+$/gm,
+
+    // Pattern for timestamps like "00:00 - " or "00:00:00 - "
+    /^\d{2}:\d{2}(?::\d{2})?\s*-\s*.+$/gm,
+
+    // Alternative pattern that's more flexible with the separator
+    /^\d{2}:\d{2}(?::\d{2})?\s*[-:]\s*.+$/gm
   ];
 
   // Try each pattern until we find matches
