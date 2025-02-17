@@ -37,3 +37,9 @@ export interface TranscriptData {
     transcript: TranscriptSegment[]
   }
 }
+
+export interface VideoInfo {
+  title: string;
+  chapters: string;
+  transcript: TranscriptSegment[] | null;
+}

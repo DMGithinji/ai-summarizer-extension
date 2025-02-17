@@ -1,34 +1,33 @@
 import React, { useCallback, useState } from "react";
 import { getDefaultPrompt, getSummaryServiceData } from "@/hooks/useStorage";
-import { formatTimestamp, getVideoTitle, getVideoTranscript } from "../utils/getTranscript";
+import { formatTimestamp, getVideoTitle, getVideoInfo } from "../utils/getVideoData";
 import { FloatingButton } from "./FloatingButton";
 import "@/styles/index.css";
-import { TranscriptSegment } from "@/config/types";
+import { TranscriptSegment, VideoInfo } from "@/config/types";
 import { TranscriptTab } from "./TranscriptTab";
 import { PRECONFIGURED_PROMPTS } from "@/config/prompts";
 import { fitTextToContextLimit } from "@/lib/adaptiveTextSampling";
+
 
 export function YTSummarizer({
   displayMode,
 }: {
   displayMode: "tab" | "floating";
 }) {
-  const [transcript, setTranscript] = useState<TranscriptSegment[] | null>(
-    null
-  );
+  const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null)
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const retrieveTranscript = useCallback(async () => {
-    if (transcript || isLoading) return transcript;
+    if (videoInfo || isLoading) return videoInfo;
 
     setIsLoading(true);
     setError(null);
 
     try {
-      const newTranscript = await getVideoTranscript(window.location.href);
-      setTranscript(newTranscript);
-      return newTranscript;
+      const videoData = await getVideoInfo();
+      setVideoInfo(videoData);
+      return videoData;
     } catch (err) {
       const errorMessage = "Failed to fetch transcript. Please try again.";
       setError(errorMessage);
@@ -37,22 +36,23 @@ export function YTSummarizer({
     } finally {
       setIsLoading(false);
     }
-  }, [transcript, isLoading]);
+  }, [videoInfo, isLoading]);
 
   const generateSummary = useCallback(
     async (e?: React.MouseEvent) => {
       e?.stopPropagation();
-      const currentTranscript = await retrieveTranscript();
-      if (!currentTranscript) return;
+      const videoData = await retrieveTranscript();
+      if (!videoData?.transcript) return;
 
       try {
         const {aiUrl, shouldLimitContext} = await getSummaryServiceData();
         const defaultPrompt = await getDefaultPrompt();
 
-        const title = getVideoTitle();
-        const transcriptString = currentTranscript
+        const title = videoData.title ? `Title: ${videoData.title}` : getVideoTitle();
+        const chapters = videoData.chapters.length ? `Chapters:\n${videoData.chapters}\n` : '';
+        const transcriptString = videoData.transcript
           .map(
-            (entry) => {
+            (entry: TranscriptSegment) => {
               if (shouldLimitContext) return  entry.text;
               return `(${formatTimestamp(entry.start)} - ${formatTimestamp(entry.end)}) ${entry.text}`
             }
@@ -62,8 +62,8 @@ export function YTSummarizer({
         const textToSummarize = shouldLimitContext ? fitTextToContextLimit(transcriptString) : transcriptString
 
         const prompt = defaultPrompt?.content || PRECONFIGURED_PROMPTS[0].content;
-        const disclaimer = 'End with a brief disclaimer that the output given is a summary of the youtube video and doesn’t cover every detail or nuance. And subtly suggest the user can ask follow up questions.'
-        const transcriptWithPrompt = `Carefully analyze the following transcript then, ${prompt} ${disclaimer}\n\n${title}\nTranscript: ${textToSummarize}`;
+        const disclaimer = 'End with a brief disclaimer that the output given is a summary of the youtube video and doesn’t cover every detail or nuance.\nSubtly suggest the user can ask follow up questions.'
+        const transcriptWithPrompt = `First, carefully analyze the following transcript. Then: ${prompt} ${disclaimer}\n\n${title}\n${chapters}Transcript: ${textToSummarize}`;
 
         await chrome.runtime.sendMessage({
           type: 'STORE_TEXT',
@@ -94,7 +94,7 @@ export function YTSummarizer({
     <TranscriptTab
       error={error}
       isLoading={isLoading}
-      transcript={transcript}
+      transcript={videoInfo?.transcript || []}
       generateSummary={generateSummary}
       retrieveTranscript={retrieveTranscript}
     />

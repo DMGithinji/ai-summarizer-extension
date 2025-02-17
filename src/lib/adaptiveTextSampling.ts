@@ -22,26 +22,6 @@ const DEFAULT_CONFIG: TranscriptLimiterConfig = {
  * always ending at a word boundary. For example, in a transcript, this roughly
  * corresponds to 15 seconds of speech. The text is divided into these segments
  * before sampling to ensure we don't cut mid-sentence and maintain readable chunks.
- *
- * @param textToReduce - The input text to be reduced
- * @param config - Optional configuration object
- * @param config.maxLength - Maximum length of output text (default: 23000)
- * @param config.initialContentRatio - Portion of maxLength to reserve for initial content (default: 0.4)
- * @param config.chunkSize - Size of each text segment for sampling (default: 300)
- * @param config.minChunksPerSegment - Minimum chunks to sample at each point (default: 3)
- *
- * @returns Reduced text that fits within maxLength, with preserved word boundaries
- *
- * @example
- * const config = { maxLength: 1000, initialContentRatio: 0.5 };
- * const summary = fitTextToContextLimit(longText, config);
- *
- * @remarks
- * - Maintains word boundaries, never cuts words in half
- * - Ensures even distribution of sampled content after initial portion
- * - Useful for preparing long texts for AI processing with character limits
- * - Segments are sampled in groups (minChunksPerSegment) to maintain local context
- * - Cleanup includes normalizing whitespace and removing excessive newlines
  */
 export function fitTextToContextLimit(
   textToReduce: string,

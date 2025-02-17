@@ -1,8 +1,19 @@
 import { TranscriptSegment } from "@/config/types";
+import { extractBasicInfo } from "./metadataExtractor";
 
-export const getVideoTranscript = async (url: string) => {
+export const getVideoInfo = async () => {
+  const url = window.location.href;
   const videoId = getYoutubeVideoId(url);
+  const youtubeHtml = await getYoutubeHtml(videoId)
+  const basicInfo = extractBasicInfo(youtubeHtml);
+  const transcript = await getTranscript(youtubeHtml);
+  return {
+    ...basicInfo,
+    transcript
+  }
+}
 
+const getYoutubeHtml = async (videoId: string) => {
   const isMobileYouTube = window.location.hostname === "m.youtube.com";
   const baseUrl = isMobileYouTube
     ? "https://m.youtube.com"
@@ -26,9 +37,15 @@ export const getVideoTranscript = async (url: string) => {
     throw new Error("Transcript query failed. Failed to fetch video page");
   }
 
-  const youtubeHtml = await response.text();
+  return await response.text();
+}
 
-  // Match URL pattern between the starting and ending markers
+const getTranscript = async (youtubeHtml: string) => {
+  const isMobileYouTube = window.location.hostname === "m.youtube.com";
+  const baseUrl = isMobileYouTube
+    ? "https://m.youtube.com"
+    : "https://www.youtube.com";
+
   const transcriptLinkPattern =
     /(?:https:\/\/(?:www|m)\.youtube\.com)?\/api\/timedtext\?[^"']+lang=en[^"']*/;
   const match = youtubeHtml.match(transcriptLinkPattern);
@@ -49,15 +66,6 @@ export const getVideoTranscript = async (url: string) => {
   const transcript = resegmentTranscript(transcriptSegments);
 
   return transcript;
-};
-
-export function getYoutubeVideoId(url: string) {
-  const urlObj = new URL(url);
-  const videoId = urlObj.searchParams.get("v");
-  if (!videoId) {
-    throw new Error("Could not find video ID");
-  }
-  return videoId;
 }
 
 async function fetchXMLTranscript(
@@ -164,21 +172,14 @@ const parseXMLTranscript = (xmlText: string) => {
   }
 };
 
-export const getCurrentVideoId = (): string | null => {
-  const url = new URL(window.location.href);
-
-  // Both mobile and desktop YouTube use 'v' parameter for regular videos
-  const videoId = url.searchParams.get('v');
-  if (videoId) return videoId;
-
-  // Handle YouTube Shorts format (only on desktop)
-  if (window.location.hostname !== 'm.youtube.com' && url.pathname.startsWith('/shorts/')) {
-    const shortsId = url.pathname.split('/')[2];
-    if (shortsId) return shortsId;
+export function getYoutubeVideoId(url: string) {
+  const urlObj = new URL(url);
+  const videoId = urlObj.searchParams.get("v");
+  if (!videoId) {
+    throw new Error("Could not find video ID");
   }
-
-  return null;
-};
+  return videoId;
+}
 
 export const getVideoTitle = (): string => {
   if (window.location.hostname === 'm.youtube.com') {
@@ -195,7 +196,6 @@ export const getVideoTitle = (): string => {
     return desktopTitle ? `Video Title: ${desktopTitle}` : "";
   }
 };
-
 
 export function formatTimestamp(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
