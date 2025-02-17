@@ -4,20 +4,24 @@ export const PRECONFIGURED_PROMPTS: Prompt[] = [
   {
     id: 'like-12',
     name: 'Simple language',
-    isDefault: true,
-    content: `Carefully analyze the following transcript then, Explain the following text to me like I am 12 years old (I am not though). I mean use simple, clear, conversational language that's easy to understand.
-Break the text up using relevant dynamic emojis. Avoid long paragraphs.
-Don't explain obvious stuff.`,
+    content: `Explain the following text with language:
+- Simple and clear language with a conversational tone.
+- Cover all the major and interesting topics discussed.
+- Break the headers using relevant dynamic emojis.
+- Don't start the text with "Let me...", or "Here is the summary...". Just give the results.
+Make it short and sweet`,
   },
   {
     id: 'short-form',
     name: 'Shortform-Like Summary (Detailed)',
+    isDefault: true,
     content: `Summarize the following how Shortlist or Blinkist would.
 Keep the tone of the content. Keep it conversational.
 Don't skip any major topics throughout the content.
-Use emojis on headers & subheaders to break up text.
+Break the headers using relevant dynamic emojis.
 Go beyond the title in giving the summary, look through entire content.
-Sprinkle in quotes or excerpts to better link the summary to the content.`
+Sprinkle in quotes or excerpts to better link the summary to the content.
+Don't start the text with "Let me...", or "Here is the summary...". Just give the results.`
 },
   {
     id: '5-10-points',
@@ -37,6 +41,7 @@ Don't include any additional information, focus on the key points.`,
     - Expound very briefly on what was discussed on each topic
     - Include any notable quotes or statistics
     - Keep the tone of the content. Be conversational. How a friend would give the summary.
-3. End with a brief takeaways`,
+3. End with a brief takeaways
+4. Don't start the text with "Let me...", or "Here is the summary...". Just give the results.`,
   },
 ]

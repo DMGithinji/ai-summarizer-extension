@@ -25,7 +25,7 @@ export function WebSummarizer() {
       const defaultPrompt = await getDefaultPrompt();
       const capturedText = await captureText();
 
-      const disclaimer = 'End with a brief disclaimer that the output given is a summary of the content and doesn’t cover every detail or nuance'
+      const disclaimer = 'End with a brief disclaimer that the output given is a summary of the content and doesn’t cover every detail or nuance. And subtly suggest the user can ask follow up questions.'
       const content = shouldLimitContext ? fitTextToContextLimit(capturedText) : capturedText;
       const pasteContent = `${defaultPrompt.content}${disclaimer}\n\nContent: ${content}`
       const processedPrompt = shouldLimitContext ? fitTextToContextLimit(pasteContent) : `${pasteContent}`

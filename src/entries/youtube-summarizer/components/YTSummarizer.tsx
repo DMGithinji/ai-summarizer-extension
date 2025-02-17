@@ -62,7 +62,7 @@ export function YTSummarizer({
         const textToSummarize = shouldLimitContext ? fitTextToContextLimit(transcriptString) : transcriptString
 
         const prompt = defaultPrompt?.content || PRECONFIGURED_PROMPTS[0].content;
-        const disclaimer = 'End with a brief disclaimer that the output given is a summary of the youtube video and doesn’t cover every detail or nuance'
+        const disclaimer = 'End with a brief disclaimer that the output given is a summary of the youtube video and doesn’t cover every detail or nuance. And subtly suggest the user can ask follow up questions.'
         const transcriptWithPrompt = `Carefully analyze the following transcript then, ${prompt} ${disclaimer}\n\n${title}\nTranscript: ${textToSummarize}`;
 
         await chrome.runtime.sendMessage({
