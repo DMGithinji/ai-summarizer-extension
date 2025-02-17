@@ -4,8 +4,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { TranscriptSegment } from "@/config/types";
-import { formatTimestamp } from "../utils/getTranscript";
+import { TranscriptSegment, VideoInfo } from "@/config/types";
+import { formatTimestamp } from "../utils/getVideoData";
 
 import {
   Copy,
@@ -30,7 +30,7 @@ export const TranscriptTab = ({
   isLoading: boolean;
   transcript: TranscriptSegment[] | null;
   generateSummary: (e?: React.MouseEvent) => Promise<void>;
-  retrieveTranscript: () => Promise<TranscriptSegment[] | null>;
+  retrieveTranscript: () => Promise<VideoInfo | null>;
 }) => {
   const accordionContentRef = useRef<HTMLDivElement>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
@@ -83,7 +83,9 @@ export const TranscriptTab = ({
   const copyTranscript = useCallback(
     async (e?: React.MouseEvent) => {
       e?.stopPropagation();
-      const currentTranscript = await retrieveTranscript();
+      const videoInfo = await retrieveTranscript();
+      const currentTranscript = videoInfo?.transcript;
+
       if (!currentTranscript) return;
 
       try {
