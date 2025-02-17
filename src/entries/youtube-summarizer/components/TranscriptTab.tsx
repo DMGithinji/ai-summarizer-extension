@@ -1,22 +1,21 @@
+import { useState, useCallback, useRef, useEffect } from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { TranscriptSegment, VideoInfo } from "@/config/types";
-import { formatTimestamp } from "../utils/getVideoData";
-
+import Spinner from "@/components/ui/spinner";
 import {
   Copy,
   Settings,
-  Loader2,
   ChevronDown,
   CopyCheck,
   ScrollText,
   Crosshair,
 } from "lucide-react";
-import { useState, useCallback, useRef, useEffect } from "react";
+import { TranscriptSegment, VideoInfo } from "@/config/types";
+import { formatTimestamp } from "../utils/getVideoData";
 import AiSelectButton from "./SummarizeButton";
 
 export const TranscriptTab = ({
@@ -48,7 +47,7 @@ export const TranscriptTab = ({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const resizeObserver = new ResizeObserver(entries => {
+    const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const width = entry.contentRect.width;
         setIsVisible(width <= 450);
@@ -67,7 +66,7 @@ export const TranscriptTab = ({
     async (value: string) => {
       setIsOpen(value === "transcript");
       // Set max height of content as always equal to video
-      const ytPlayer = document.querySelector('.style-scope.ytd-player');
+      const ytPlayer = document.querySelector(".style-scope.ytd-player");
       if (ytPlayer && accordionContentRef.current) {
         const height = ytPlayer.getBoundingClientRect().height;
         const adjustedHeight = height - 60;
@@ -158,7 +157,8 @@ export const TranscriptTab = ({
     <div
       ref={containerRef}
       className="relative z-50 mb-4 px-1 max-w-[500px]"
-      style={{ visibility: isVisible ? 'visible' : 'hidden' }}>
+      style={{ visibility: isVisible ? "visible" : "hidden" }}
+    >
       <Accordion
         type="single"
         collapsible
@@ -178,8 +178,10 @@ export const TranscriptTab = ({
               </div>
 
               <div className="flex items-center gap-3">
-
-                <AiSelectButton disabled={isLoading}  onSummarize={generateSummary} />
+                <AiSelectButton
+                  disabled={isLoading}
+                  onSummarize={generateSummary}
+                />
                 {isOpen ? (
                   <button
                     title="Go to current timestamp"
@@ -226,41 +228,41 @@ export const TranscriptTab = ({
 
           <AccordionContent className="px-4 py-4">
             <div ref={accordionContentRef} className="overflow-y-auto">
-            {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
-              </div>
-            ) : error ? (
-              <div className="text-center py-8 text-red-400">{error}</div>
-            ) : transcript ? (
-              <div
-                ref={transcriptRef}
-                className="text-md text-gray-200 space-y-4"
-              >
-                {transcript.map((entry, index) => (
-                  <div
-                    key={index}
-                    data-index={index}
-                    className="flex gap-3 px-2 transition-all duration-300" // Add transition
+              {isLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Spinner size="lg" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-8 text-red-400">{error}</div>
+              ) : transcript ? (
+                <div
+                  ref={transcriptRef}
+                  className="text-md text-gray-200 space-y-4"
+                >
+                  {transcript.map((entry, index) => (
+                    <div
+                      key={index}
+                      data-index={index}
+                      className="flex gap-3 px-2 transition-all duration-300" // Add transition
                     >
-                    <a
-                      title='Jump to timestamp'
-                      onClick={() => handleTimestampClick(entry.start)}
-                      className="text-[14px] leading-[1.5] underline w-16 cursor-pointer flex-shrink-0"
-                    >
-                      {formatTimestamp(entry.start)}
-                    </a>
-                    <p className="pl-1 text-[14px] leading-[1.4] flex-1">
-                      {entry.text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-400">
-                No transcript retrieved for this video
-              </div>
-            )}
+                      <a
+                        title="Jump to timestamp"
+                        onClick={() => handleTimestampClick(entry.start)}
+                        className="text-[14px] leading-[1.5] underline w-16 cursor-pointer flex-shrink-0"
+                      >
+                        {formatTimestamp(entry.start)}
+                      </a>
+                      <p className="pl-1 text-[14px] leading-[1.4] flex-1">
+                        {entry.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-400">
+                  No transcript retrieved for this video
+                </div>
+              )}
             </div>
           </AccordionContent>
         </AccordionItem>

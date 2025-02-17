@@ -34,7 +34,7 @@ const AiSelectButton = ({
           title={`Summarize with ${currentAi?.name}`}
           onClick={onSummarize}
           disabled={disabled}
-          className="flex gap-3 items-center px-4 text-neutral-300 hover:text-white transition-colors text-[14px] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex gap-3 items-center px-4 text-neutral-100 hover:text-white transition-colors text-[14px] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Sparkles className="h-[16px] w-[16px]" />
           <span>Summarize</span>
