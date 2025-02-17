@@ -69,5 +69,6 @@ export const captureText = async () => {
       }
     }
   }
-  return capturedText;
+  return capturedText.replace(/\n{2,}/g, '\n');
 };
+

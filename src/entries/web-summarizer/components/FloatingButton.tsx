@@ -1,108 +1,87 @@
-import { Sparkles, X } from 'lucide-react';
+import { Sparkles, X, Settings } from 'lucide-react';
+import { styles } from './styles';
 
 interface FloatingButtonProps {
   onCapture: () => void;
   onClose: () => void;
+  onSettings: () => void;
   aiUrlName: string;
   onGetAiName: () => Promise<void>;
 }
 
-export function FloatingButton({ onCapture, onClose, aiUrlName, onGetAiName }: FloatingButtonProps) {
+export function FloatingButton({
+  onCapture,
+  onClose,
+  onSettings,
+  aiUrlName,
+  onGetAiName
+}: FloatingButtonProps) {
+  const handleMainButtonHover = (e: React.MouseEvent<HTMLButtonElement>, isEnter: boolean) => {
+    if (isEnter) {
+      onGetAiName();
+      e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+      const buttons = e.currentTarget.querySelectorAll('.floating-button') as NodeListOf<HTMLElement>;
+      buttons.forEach(button => {
+        button.style.opacity = '0.7';
+      });
+    } else {
+      e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+      const buttons = e.currentTarget.querySelectorAll('.floating-button') as NodeListOf<HTMLElement>;
+      buttons.forEach(button => {
+        button.style.opacity = '0';
+      });
+    }
+  };
+
+  const handleFloatingButtonHover = (e: React.MouseEvent<HTMLButtonElement>, isEnter: boolean) => {
+    if (isEnter) {
+      e.currentTarget.style.backgroundColor = '#fff';
+      e.currentTarget.style.opacity = '1';
+      e.currentTarget.style.transform = 'scale(1.1)';
+    } else {
+      e.currentTarget.style.backgroundColor = '#fdfdfd';
+      e.currentTarget.style.opacity = '0.5';
+      e.currentTarget.style.transform = 'scale(1)';
+    }
+  };
+
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: '20px',
-        right: '36px',
-        zIndex: 999999,
-      }}
-    >
+    <div style={styles.container}>
       <button
         onClick={onCapture}
-        style={{
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '36px',
-          height: '36px',
-          backgroundColor: 'rgba(255, 255, 255)',
-          border: '1px solid rgba(229, 231, 235, 1)',
-          borderRadius: '9999px',
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-          cursor: 'pointer',
-          transition: 'all 0.2s',
-          backdropFilter: 'blur(4px)',
-        }}
+        style={styles.mainButton}
         title={`Get ${aiUrlName} Summary`}
-        onMouseEnter={(e) => {
-          onGetAiName();
-          e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
-          // Show close button on parent hover
-          const closeButton = e.currentTarget.querySelector('.close-button') as HTMLElement;
-          if (closeButton) {
-            closeButton.style.opacity = '0.7';
-          }
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-          // Hide close button when leaving parent
-          const closeButton = e.currentTarget.querySelector('.close-button') as HTMLElement;
-          if (closeButton) {
-            closeButton.style.opacity = '0';
-          }
-        }}
+        onMouseEnter={(e) => handleMainButtonHover(e, true)}
+        onMouseLeave={(e) => handleMainButtonHover(e, false)}
       >
-        <Sparkles
-          style={{
-            width: '20px',
-            height: '20px',
-            color: '#3b82f6',
-          }}
-        />
+        <Sparkles style={styles.sparklesIcon} />
 
         <button
-          className="close-button"
+          className="floating-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSettings();
+          }}
+          style={{ ...styles.floatingButton, ...styles.settingsButton }}
+          onMouseEnter={(e) => handleFloatingButtonHover(e, true)}
+          onMouseLeave={(e) => handleFloatingButtonHover(e, false)}
+          title="Extension Settings"
+        >
+          <Settings style={{ ...styles.icon, color: '#6B7280' }} />
+        </button>
+
+        <button
+          className="floating-button"
           onClick={(e) => {
             e.stopPropagation();
             onClose();
           }}
-          style={{
-            position: 'absolute',
-            top: '-4px',
-            right: '-4px',
-            width: '12px',
-            height: '12px',
-            backgroundColor: 'rgba(243, 244, 246, 0.5)',
-            border: '1px solid transparent',
-            borderRadius: '9999px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            padding: '1px',
-            opacity: 0,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#fff';
-            e.currentTarget.style.opacity = '1';
-            e.currentTarget.style.transform = 'scale(1.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(243, 244, 246, 0.7)';
-            e.currentTarget.style.opacity = '0.7';
-            e.currentTarget.style.transform = 'scale(1)';
-          }}
+          style={{ ...styles.floatingButton, ...styles.closeButton }}
+          onMouseEnter={(e) => handleFloatingButtonHover(e, true)}
+          onMouseLeave={(e) => handleFloatingButtonHover(e, false)}
           title="Remove button"
         >
-          <X
-            style={{
-              width: '10px',
-              height: '10px',
-              color: 'brown',
-            }}
-          />
+          <X style={{ ...styles.icon, color: 'brown' }} />
         </button>
       </button>
     </div>

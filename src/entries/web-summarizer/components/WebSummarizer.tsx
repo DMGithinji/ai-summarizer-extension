@@ -25,7 +25,7 @@ export function WebSummarizer() {
       const defaultPrompt = await getDefaultPrompt();
       const capturedText = await captureText();
 
-      const disclaimer = 'End with a brief disclaimer that the output given is a summary of the content and doesn’t cover every detail or nuance. And subtly suggest the user can ask follow up questions.'
+      const disclaimer = 'End with a brief disclaimer that the output given is a summary of the content and doesn’t cover every detail or nuance. Add sth along the lines of "To get more insights, ask follow up questions or full watch video."'
       const content = shouldLimitContext ? fitTextToContextLimit(capturedText) : capturedText;
       const pasteContent = `${defaultPrompt.content}${disclaimer}\n\nContent: ${content}`
       const processedPrompt = shouldLimitContext ? fitTextToContextLimit(pasteContent) : `${pasteContent}`
@@ -43,20 +43,28 @@ export function WebSummarizer() {
   }, [])
 
   const handleClose = useCallback(async () => {
-    const rootElement = document.getElementById('web-summarizer-root')
-    if (rootElement) {
-      rootElement.remove()
-    }
     const domain = getBaseDomain();
-    await updateExcludedSites(domain);
-    alert(`"Summarize with AI" button removed on ${domain}. You can re-enable it anytime in the extension settings.`)
+    const confirmed = confirm(`Summarize with AI button will be removed from ${domain}. You can re-enable it anytime from extension settings.`);
+
+    if (confirmed) {
+      const rootElement = document.getElementById('web-summarizer-root');
+      if (rootElement) {
+        rootElement.remove();
+      }
+      await updateExcludedSites(domain);
+    }
   }, [updateExcludedSites]);
+
+  const openOptions = useCallback(() => {
+    chrome.runtime.sendMessage({ type: "OPEN_OPTIONS_PAGE" });
+  }, []);
 
   if (!hasLoaded || !showButton) return;
 
   return <FloatingButton
     onCapture={captureAndNavigate}
     onClose={handleClose}
+    onSettings={openOptions}
     onGetAiName={getCurrentAiName}
     aiUrlName={aiUrlName}
   />
