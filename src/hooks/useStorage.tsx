@@ -40,7 +40,7 @@ export function useStorage(): StorageReturnType {
           prompts: PRECONFIGURED_PROMPTS,
           aiUrl: DEFAULT_AI_SERVICE.url,
           isPremiumUser: false,
-          excludedSites: []
+          excludedSites: ['grok.com', 'chat.deepseek.com', 'gemini.google.com', 'chatgpt.com', 'claude.ai']
         });
         setPrompts(result.prompts);
         setAiUrlState(result.aiUrl);

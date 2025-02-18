@@ -26,5 +26,11 @@ export const AI_SERVICES: Record<AiServiceType, AiService> = {
     name: 'Gemini',
     url: 'https://gemini.google.com/app',
     icon: '/assets/icons/gemini-logo.png'
-  }
+  },
+  [AiServiceType.GROK]: {
+    type: AiServiceType.GROK,
+    name: 'Grok',
+    url: 'https://grok.com',
+    icon: '/assets/icons/grok-logo.png'
+  },
 };

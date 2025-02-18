@@ -1,14 +1,15 @@
 {
   "manifest_version": 3,
   "name": "justTLDR: Free AI Summarizer for YouTube and Web",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "Instantly summarize webpages or YouTube video using your existing AI accounts (ChatGPT, etc) - no additional subscription required!",
   "permissions": ["activeTab", "storage"],
   "host_permissions": [
     "https://claude.ai/*",
     "https://chatgpt.com/*",
     "https://gemini.google.com/*",
-    "https://chat.deepseek.com/*"
+    "https://chat.deepseek.com/*",
+    "https://grok.com/*"
   ],
   "options_page": "options.html",
 
@@ -25,10 +26,6 @@
       "matches": ["<all_urls>"],
       "exclude_matches": [
         "http://localhost/*",
-        "https://claude.ai/*",
-        "https://chatgpt.com/*",
-        "https://gemini.google.com/*",
-        "https://chat.deepseek.com/*",
         "https://*.google.com/*",
         "https://*.brave.com/*",
         "https://*.youtube.com/*"
@@ -40,7 +37,8 @@
         "https://claude.ai/*",
         "https://chatgpt.com/*",
         "https://gemini.google.com/*",
-        "https://chat.deepseek.com/*"
+        "https://chat.deepseek.com/*",
+        "https://grok.com/*"
       ],
       "js": ["aiPasteHandler.js"]
     },
