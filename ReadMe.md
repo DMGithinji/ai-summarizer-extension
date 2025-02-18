@@ -1,6 +1,6 @@
 # justTLDR: Free YouTube & Web AI Summarizer
 
-A browser extension that helps you summarize web content and YouTube videos using your existing AI accounts (ChatGPT, Claude, or Gemini). No additional subscription required!
+A browser extension that helps you summarize web content and YouTube videos using your existing AI accounts (ChatGPT, Claude, Gemini, Deepseek, Grok).
 
 Install the extension from [chrome web store](https://chromewebstore.google.com/detail/justtldr-free-ai-summariz/cmnjpgpkkdmkkmpliipnmhbelgbiefpa)
 or download latest version: [v2025.02.17](https://github.com/DMGithinji/ai-summarizer-extension/releases/tag/v2025.02.17)
@@ -14,6 +14,7 @@ or download latest version: [v2025.02.17](https://github.com/DMGithinji/ai-summa
   - Anthropic's Claude
   - DeepSeek's DeepSeek
   - Google's Gemini
+  - XAI's Grok
 - ✨ **Adapts to free tier AI limits**: ChatGPT Free tier has character limit that extension navigates
 - 🎯 **Non-intrusive UI**: Extension attempts to be unobtrusive and adapts to Youtube's design
 
@@ -47,6 +48,7 @@ or download latest version: [v2025.02.17](https://github.com/DMGithinji/ai-summa
 ## Privacy
 
 This extension:
+
 - Does not collect any personal data
 - Does not track user behavior
 - Only accesses webpage content when explicitly requested
@@ -57,17 +59,20 @@ This extension:
 If you want to contribute to the development:
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd ai-summarizer-extension
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Build the extension:
+
 ```bash
 npm run build
 ```
@@ -97,6 +102,7 @@ src/
 ```
 
 ### Tech Stack
+
 - Chrome Extension Manifest V3
 - React 18
 - TypeScript

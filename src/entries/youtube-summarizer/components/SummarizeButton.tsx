@@ -71,7 +71,7 @@ const AiSelectButton = ({
                 setAiUrl(ai.url);
                 setIsOpen(false);
               }}
-              className="relative flex w-full items-center px-3 py-2.5 text-md text-white hover:bg-neutral-800 transition-colors"
+              className="relative flex w-full items-center px-3 py-2.5 text-md text-white hover:bg-neutral-800 transition-colors z-[9999]"
             >
               <span className="pl-4 text-[12px] font-normal">{ai.name}</span>
               {ai.url === currentAi.url && (
