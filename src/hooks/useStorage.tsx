@@ -194,11 +194,20 @@ export const getSummaryServiceData = async () => {
       aiUrl: AI_SERVICES[AiServiceType.CHATGPT].url,
     });
 
-    const shouldLimitContext = !result.isPremiumUser && [AI_SERVICES[AiServiceType.CHATGPT].url].includes(result.aiUrl)
-    return { aiUrl: result.aiUrl, shouldLimitContext };
+    let characterLimit = null;
+    if (!result.isPremiumUser && AI_SERVICES[AiServiceType.CHATGPT].url === result.aiUrl) {
+      characterLimit = AI_SERVICES[AiServiceType.CHATGPT].characterLimit;
+    }
+    if (AI_SERVICES[AiServiceType.DEEPSEEK].url === result.aiUrl) {
+      characterLimit = AI_SERVICES[AiServiceType.DEEPSEEK].characterLimit;
+    }
+    return {
+      aiUrl: result.aiUrl,
+      characterLimit
+    };
   } catch (err) {
     console.error('Failed to get AI URL:', err);
-    return { aiUrl: DEFAULT_AI_SERVICE.url, shouldLimitContext: true};
+    return { aiUrl: DEFAULT_AI_SERVICE.url, characterLimit: DEFAULT_AI_SERVICE.characterLimit};
   }
 };
 

@@ -1,12 +1,12 @@
 interface TranscriptLimiterConfig {
-  maxLength: number;
-  initialContentRatio: number;  // 0.4 means 40% of maxLength for content not sampled
+  characterLimit: number;
+  initialContentRatio: number;  // 0.4 means 40% of characterLimit for content not sampled
   minChunksPerSegment: number;        // Minimum number of segments to sample at each point
   chunkSize: number;            // Character count per segment. Segments are used for sampling
 }
 
 const DEFAULT_CONFIG: TranscriptLimiterConfig = {
-  maxLength: 20000, // at 20000 exceeds chatgpts free tier character limit. Determined by trial & error
+  characterLimit: 20000, // at 20000 exceeds chatgpts free tier character limit. Determined by trial & error
   initialContentRatio: 0.4,
   chunkSize: 300, // approximately 15 seconds of words
   minChunksPerSegment: 3,
@@ -29,7 +29,7 @@ export function fitTextToContextLimit(
 ): string {
   const finalConfig = { ...DEFAULT_CONFIG, ...config };
 
-  if (textToReduce.length <= finalConfig.maxLength) {
+  if (textToReduce.length <= finalConfig.characterLimit) {
     return textToReduce;
   }
 
@@ -39,7 +39,7 @@ export function fitTextToContextLimit(
   let currentLength = 0;
 
   // 1. Get initial segments until we hit the initial content ratio
-  const initialContentLength = Math.floor(finalConfig.maxLength * finalConfig.initialContentRatio);
+  const initialContentLength = Math.floor(finalConfig.characterLimit * finalConfig.initialContentRatio);
   let i = 0;
 
   while (i < textChunks.length && currentLength < initialContentLength) {
@@ -60,7 +60,7 @@ export function fitTextToContextLimit(
   }
 
   // 2. Sample remaining content with even distribution
-  const remainingSpace = finalConfig.maxLength - currentLength;
+  const remainingSpace = finalConfig.characterLimit - currentLength;
   const remainingSegments = textChunks.slice(i);
 
   if (remainingSegments.length > 0) {
@@ -73,14 +73,14 @@ export function fitTextToContextLimit(
 
     // Sample from remaining content
     for (const point of samplePoints) {
-      if (currentLength >= finalConfig.maxLength) break;
+      if (currentLength >= finalConfig.characterLimit) break;
 
       const index = Math.floor(remainingSegments.length * point);
       const sampleSize = Math.min(finalConfig.minChunksPerSegment, remainingSegments.length - index);
 
       for (let j = 0; j < sampleSize; j++) {
         const segment = remainingSegments[index + j];
-        const spaceLeft = finalConfig.maxLength - currentLength;
+        const spaceLeft = finalConfig.characterLimit - currentLength;
 
         if (segment.length <= spaceLeft) {
           result.push(segment);
