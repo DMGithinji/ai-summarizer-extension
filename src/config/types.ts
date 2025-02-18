@@ -24,6 +24,7 @@ export interface AiService {
   name: string;
   url: string;
   icon: string;
+  characterLimit?: number;
 }
 
 export interface TranscriptSegment {
