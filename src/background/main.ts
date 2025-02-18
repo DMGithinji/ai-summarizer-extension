@@ -3,6 +3,7 @@ const VALID_PATHS: Record<string, string> = {
   "claude.ai": "/new",
   "chatgpt.com": "/",
   "chat.deepseek.com": "/",
+  "grok.com": "/",
   "gemini.google.com": "/app",
 };
 let pendingText: string | null = null;

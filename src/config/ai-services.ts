@@ -21,6 +21,12 @@ export const AI_SERVICES: Record<AiServiceType, AiService> = {
     icon: '/assets/icons/deepseek-logo.png',
     characterLimit: 250000
   },
+  [AiServiceType.GROK]: {
+    type: AiServiceType.GROK,
+    name: 'Grok',
+    url: 'https://grok.com',
+    icon: '/assets/icons/grok-logo.png'
+  },
   [AiServiceType.GEMINI]: {
     type: AiServiceType.GEMINI,
     name: 'Gemini',

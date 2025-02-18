@@ -16,7 +16,8 @@ export enum AiServiceType {
   CLAUDE = 'claude',
   CHATGPT = 'chatgpt',
   GEMINI = 'gemini',
-  DEEPSEEK = 'deepseek'
+  DEEPSEEK = 'deepseek',
+  GROK = 'grok'
 }
 
 export interface AiService {
