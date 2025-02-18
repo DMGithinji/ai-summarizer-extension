@@ -45,7 +45,7 @@ export function YTSummarizer({
       if (!videoData?.transcript) return;
 
       try {
-        const {aiUrl, shouldLimitContext} = await getSummaryServiceData();
+        const {aiUrl, characterLimit} = await getSummaryServiceData();
         const defaultPrompt = await getDefaultPrompt();
 
         const title = videoData.title ? `Title: ${videoData.title}` : getVideoTitle();
@@ -53,13 +53,13 @@ export function YTSummarizer({
         const transcriptString = videoData.transcript
           .map(
             (entry: TranscriptSegment) => {
-              if (shouldLimitContext) return  entry.text;
+              if (characterLimit) return  entry.text;
               return `(${formatTimestamp(entry.start)} - ${formatTimestamp(entry.end)}) ${entry.text}`
             }
           )
           .join(" ");
 
-        const textToSummarize = shouldLimitContext ? fitTextToContextLimit(transcriptString) : transcriptString
+        const textToSummarize = characterLimit ? fitTextToContextLimit(transcriptString, { characterLimit }) : transcriptString
 
         const prompt = defaultPrompt?.content || PRECONFIGURED_PROMPTS[0].content;
         const disclaimer = 'End with a brief disclaimer that the output given is a summary of the youtube video and doesn’t cover every detail or nuance.\nAdd sth along the lines of "To get more insights, ask follow up questions or full watch video."'

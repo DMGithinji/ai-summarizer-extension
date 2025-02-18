@@ -21,14 +21,14 @@ export function WebSummarizer() {
 
   const captureAndNavigate = useCallback(async () => {
     try {
-      const { shouldLimitContext, aiUrl } = await getSummaryServiceData();
+      const { characterLimit, aiUrl } = await getSummaryServiceData();
       const defaultPrompt = await getDefaultPrompt();
       const capturedText = await captureText();
 
       const disclaimer = 'End with a brief disclaimer that the output given is a summary of the content and doesn’t cover every detail or nuance. Add sth along the lines of "To get more insights, ask follow up questions or full watch video."'
-      const content = shouldLimitContext ? fitTextToContextLimit(capturedText) : capturedText;
+      const content = characterLimit ? fitTextToContextLimit(capturedText) : capturedText;
       const pasteContent = `${defaultPrompt.content}${disclaimer}\n\nContent: ${content}`
-      const processedPrompt = shouldLimitContext ? fitTextToContextLimit(pasteContent) : `${pasteContent}`
+      const processedPrompt = characterLimit ? fitTextToContextLimit(pasteContent, { characterLimit }) : `${pasteContent}`
 
       await chrome.runtime.sendMessage({
         type: 'STORE_TEXT',

@@ -5,7 +5,8 @@ export const AI_SERVICES: Record<AiServiceType, AiService> = {
     type: AiServiceType.CHATGPT,
     name: 'ChatGPT',
     url: 'https://chatgpt.com',
-    icon: '/assets/icons/chatgpt-logo.png'
+    icon: '/assets/icons/chatgpt-logo.png',
+    characterLimit: 20000
   },
   [AiServiceType.CLAUDE]: {
     type: AiServiceType.CLAUDE,
@@ -17,7 +18,8 @@ export const AI_SERVICES: Record<AiServiceType, AiService> = {
     type: AiServiceType.DEEPSEEK,
     name: 'DeepSeek',
     url: 'https://chat.deepseek.com',
-    icon: '/assets/icons/deepseek-logo.png'
+    icon: '/assets/icons/deepseek-logo.png',
+    characterLimit: 250000
   },
   [AiServiceType.GEMINI]: {
     type: AiServiceType.GEMINI,
