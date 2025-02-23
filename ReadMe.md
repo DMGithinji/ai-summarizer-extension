@@ -18,8 +18,6 @@ or download latest version: [v2025.02.20](https://github.com/DMGithinji/ai-summa
 - ✨ **Adapts to free tier AI limits**: ChatGPT Free tier has character limit that extension navigates
 - 🎯 **Non-intrusive UI**: Extension attempts to be unobtrusive and adapts to Youtube's design
 
-💡 **Mobile Usage**: Want to use this extension on mobile? Install [Kiwi Browser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser&pcampaignid=web_share) from the Play Store - it supports Chrome extensions on Android! Enjoy! 😉
-
 ## How to Use
 
 1. **Web Summarization**:

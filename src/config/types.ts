@@ -7,12 +7,12 @@ export interface Prompt {
 
 export interface StorageData {
   prompts: Prompt[];
-  aiUrl: string;
-  isPremiumUser: boolean;
+  aiServiceId: AiServiceId;
+  premiumServices: {[id: string]: boolean} | null;
   excludedSites: string[];
 }
 
-export enum AiServiceType {
+export enum AiServiceId {
   CLAUDE = 'claude',
   CHATGPT = 'chatgpt',
   GEMINI = 'gemini',
@@ -21,11 +21,12 @@ export enum AiServiceType {
 }
 
 export interface AiService {
-  type: AiServiceType;
+  id: AiServiceId;
   name: string;
   url: string;
   icon: string;
-  characterLimit?: number;
+  characterLimit: number;
+  premiumCharacterLimit: number;
 }
 
 export interface TranscriptSegment {

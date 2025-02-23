@@ -3,15 +3,13 @@ import { getDefaultPrompt, getSummaryServiceData, useStorage } from '@/hooks/use
 import { FloatingButton } from './FloatingButton'
 import { captureText } from '../utils/captureText'
 import { fitTextToContextLimit } from '@/lib/adaptiveTextSampling';
-import { AI_SERVICES } from '@/config/ai-services';
 
 export function WebSummarizer() {
-  const { hasLoaded, currentAi, excludedSites, updateExcludedSites } = useStorage();
-  const [aiUrlName, setAiUrlName] = useState<string>(currentAi.name);
+  const { hasLoaded, aiService, excludedSites, updateExcludedSites } = useStorage();
+  const [aiServiceName, setAiServiceName] = useState<string>(aiService.name);
   const getCurrentAiName = useCallback(async () => {
-    const { aiUrl } = await getSummaryServiceData();
-    const name = Object.values(AI_SERVICES).find(ai => ai.url === aiUrl)?.name || 'ChatGPT';
-    setAiUrlName(name);
+    const { name } = await getSummaryServiceData();
+    setAiServiceName(name);
   }, []);
 
   const showButton = useMemo(() => {
@@ -21,7 +19,7 @@ export function WebSummarizer() {
 
   const captureAndNavigate = useCallback(async () => {
     try {
-      const { characterLimit, aiUrl } = await getSummaryServiceData();
+      const { characterLimit, url } = await getSummaryServiceData();
       const defaultPrompt = await getDefaultPrompt();
       const capturedText = await captureText();
 
@@ -35,7 +33,7 @@ export function WebSummarizer() {
         text: processedPrompt
       });
 
-      const aiUrlWithParam = `${aiUrl}?justTLDR`
+      const aiUrlWithParam = `${url}?justTLDR`
       window.open(aiUrlWithParam, '_blank')
     } catch (err) {
       console.error('Failed to capture text:', err)
@@ -44,15 +42,11 @@ export function WebSummarizer() {
 
   const handleClose = useCallback(async () => {
     const domain = getBaseDomain();
-    const confirmed = confirm(`Summarize with AI button will be removed from ${domain}. You can re-enable it anytime from extension settings.`);
-
-    if (confirmed) {
-      const rootElement = document.getElementById('web-summarizer-root');
-      if (rootElement) {
-        rootElement.remove();
-      }
-      await updateExcludedSites(domain);
+    const rootElement = document.getElementById('web-summarizer-root');
+    if (rootElement) {
+      rootElement.remove();
     }
+    await updateExcludedSites(domain);
   }, [updateExcludedSites]);
 
   const openOptions = useCallback(() => {
@@ -66,7 +60,7 @@ export function WebSummarizer() {
     onClose={handleClose}
     onSettings={openOptions}
     onGetAiName={getCurrentAiName}
-    aiUrlName={aiUrlName}
+    aiServiceName={aiServiceName}
   />
 }
 
