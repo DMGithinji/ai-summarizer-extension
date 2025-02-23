@@ -53,21 +53,21 @@ export function YTSummarizer({
         const transcriptString = videoData.transcript
           .map(
             (entry: TranscriptSegment) => {
-              if (characterLimit) return  entry.text;
-              return `(${formatTimestamp(entry.start)} - ${formatTimestamp(entry.end)}) ${entry.text}`
+              return `(${formatTimestamp(entry.start)}) ${entry.text}`
             }
           )
           .join(" ");
 
-        const textToSummarize = characterLimit ? fitTextToContextLimit(transcriptString, { characterLimit }) : transcriptString
-
         const prompt = defaultPrompt?.content || PRECONFIGURED_PROMPTS[0].content;
         const disclaimer = 'End with a brief disclaimer that the output given is a summary of the youtube video and doesn’t cover every detail or nuance.\nAdd sth along the lines of "To get more insights, ask follow up questions or watch full video."'
-        const transcriptWithPrompt = `First, carefully analyze the following transcript. Then: ${prompt} ${disclaimer}\n\n${title}\n${chapters}Transcript: ${textToSummarize}`;
+        const transcriptWithPrompt = `First, carefully analyze the following transcript. Then: ${prompt} ${disclaimer}\n\n${title}\n${chapters}Transcript: ${transcriptString}`;
+        const textToSummarize = characterLimit && transcriptString.length > characterLimit
+          ? fitTextToContextLimit(transcriptWithPrompt, { characterLimit })
+          : transcriptWithPrompt
 
         await chrome.runtime.sendMessage({
           type: 'STORE_TEXT',
-          text: transcriptWithPrompt
+          text: textToSummarize
         });
 
         const aiUrlWithParam = `${aiUrl}?justTLDR`;

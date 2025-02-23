@@ -193,13 +193,14 @@ export const getSummaryServiceData = async () => {
       isPremiumUser: false,
       aiUrl: AI_SERVICES[AiServiceType.CHATGPT].url,
     });
+    const service = Object.values(AI_SERVICES).find(ai => ai.url === result.aiUrl) || DEFAULT_AI_SERVICE;
 
     let characterLimit = null;
-    if (!result.isPremiumUser && AI_SERVICES[AiServiceType.CHATGPT].url === result.aiUrl) {
-      characterLimit = AI_SERVICES[AiServiceType.CHATGPT].characterLimit;
+    if (AI_SERVICES[AiServiceType.CHATGPT].url === result.aiUrl) {
+      characterLimit = result.isPremiumUser ? AI_SERVICES[AiServiceType.CHATGPT].characterLimit : 200000;
     }
-    if (AI_SERVICES[AiServiceType.DEEPSEEK].url === result.aiUrl) {
-      characterLimit = AI_SERVICES[AiServiceType.DEEPSEEK].characterLimit;
+    if (AI_SERVICES[service.type].url === result.aiUrl) {
+      characterLimit = AI_SERVICES[service.type].characterLimit;
     }
     return {
       aiUrl: result.aiUrl,
