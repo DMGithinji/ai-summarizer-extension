@@ -1,50 +1,50 @@
-import { AiServiceType } from "@/config/types";
+import { AiServiceId } from "@/config/types";
 
 const SUBMIT_DELAY = 750; // ms to wait before submitting
 
 // Editor selectors for different AI services
 const EDITOR_SELECTORS = {
-  [AiServiceType.CLAUDE]: 'div[contenteditable="true"].ProseMirror',
-  [AiServiceType.CHATGPT]: 'div[contenteditable="true"].ProseMirror',
-  [AiServiceType.GEMINI]: 'div[contenteditable="true"][class*="textarea"]',
-  [AiServiceType.DEEPSEEK]: "#chat-input",
-  [AiServiceType.GROK]: "textarea",
+  [AiServiceId.CLAUDE]: 'div[contenteditable="true"].ProseMirror',
+  [AiServiceId.CHATGPT]: 'div[contenteditable="true"].ProseMirror',
+  [AiServiceId.GEMINI]: 'div[contenteditable="true"][class*="textarea"]',
+  [AiServiceId.DEEPSEEK]: "#chat-input",
+  [AiServiceId.GROK]: "textarea",
 } as const;
 
-export function getAIChatBot(url: string): AiServiceType {
+export function getAIChatBot(url: string): AiServiceId {
   const urlObj = new URL(url);
-  if (urlObj.hostname.includes("claude")) return AiServiceType.CLAUDE;
-  if (urlObj.hostname.includes("chatgpt")) return AiServiceType.CHATGPT;
-  if (urlObj.hostname.includes("gemini")) return AiServiceType.GEMINI;
-  if (urlObj.hostname.includes("deepseek")) return AiServiceType.DEEPSEEK;
-  if (urlObj.hostname.includes("grok")) return AiServiceType.GROK;
+  if (urlObj.hostname.includes("claude")) return AiServiceId.CLAUDE;
+  if (urlObj.hostname.includes("chatgpt")) return AiServiceId.CHATGPT;
+  if (urlObj.hostname.includes("gemini")) return AiServiceId.GEMINI;
+  if (urlObj.hostname.includes("deepseek")) return AiServiceId.DEEPSEEK;
+  if (urlObj.hostname.includes("grok")) return AiServiceId.GROK;
 
   throw new Error("Invalid chatbot url");
 }
 
 export async function pasteToEditor(
-  service: AiServiceType,
+  serviceId: AiServiceId,
   text: string
 ): Promise<void> {
   try {
     // Get editor element
     const editor = document.querySelector(
-      EDITOR_SELECTORS[service]
+      EDITOR_SELECTORS[serviceId]
     ) as HTMLElement | null;
     if (!editor) {
       throw new Error("Editor not found");
     }
 
-    switch (service) {
-      case AiServiceType.GROK:
-      case AiServiceType.DEEPSEEK: {
+    switch (serviceId) {
+      case AiServiceId.GROK:
+      case AiServiceId.DEEPSEEK: {
         // These use TextArea Element
         const textareaEditor = editor as HTMLTextAreaElement;
         textareaEditor.value = text;
         clickSubmit(textareaEditor);
         break;
       }
-      case AiServiceType.GEMINI: {
+      case AiServiceId.GEMINI: {
         editor.textContent = text;
         clickSubmit(editor);
         const sendButton = document.querySelector(
@@ -55,8 +55,8 @@ export async function pasteToEditor(
         }
         break;
       }
-      case AiServiceType.CLAUDE:
-      case AiServiceType.CHATGPT: {
+      case AiServiceId.CLAUDE:
+      case AiServiceId.CHATGPT: {
         // Clear any previous text
         const placeholder = editor.querySelector("p.is-empty");
         if (placeholder) {

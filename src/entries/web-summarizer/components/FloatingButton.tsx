@@ -5,7 +5,7 @@ interface FloatingButtonProps {
   onCapture: () => void;
   onClose: () => void;
   onSettings: () => void;
-  aiUrlName: string;
+  aiServiceName: string;
   onGetAiName: () => Promise<void>;
 }
 
@@ -13,7 +13,7 @@ export function FloatingButton({
   onCapture,
   onClose,
   onSettings,
-  aiUrlName,
+  aiServiceName,
   onGetAiName
 }: FloatingButtonProps) {
   const handleMainButtonHover = (e: React.MouseEvent<HTMLButtonElement>, isEnter: boolean) => {
@@ -50,7 +50,7 @@ export function FloatingButton({
       <button
         onClick={onCapture}
         style={styles.mainButton}
-        title={`Get ${aiUrlName} Summary`}
+        title={`Get ${aiServiceName} Summary`}
         onMouseEnter={(e) => handleMainButtonHover(e, true)}
         onMouseLeave={(e) => handleMainButtonHover(e, false)}
       >

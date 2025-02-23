@@ -1,9 +1,9 @@
 import { useStorage } from "@/hooks/useStorage";
 import { AI_SERVICES } from "@/config/ai-services";
-import { AiServiceType } from "@/config/types";
+import { AiServiceId } from "@/config/types";
 
 export function AISelector() {
-  const { currentAi, setAiUrl, isPremiumUser, setIsProUser } = useStorage();
+  const { aiService, setAiService, premiumServices, setIsProUser } = useStorage();
 
   return (
     <div className="space-y-4 w-full">
@@ -15,10 +15,10 @@ export function AISelector() {
       <div className="flex flex-wrap sm:flex-nowrap gap-4 w-full max-w-6xl mx-auto">
       {Object.values(AI_SERVICES).map((service) => (
           <button
-            key={service.type}
-            onClick={() => setAiUrl(service.url)}
+            key={service.id}
+            onClick={() => setAiService(service.id)}
             className={`relative flex flex-col items-center p-4 bg-neutral-800/50 rounded-lg border transition-all flex-1 hover:bg-neutral-800 ${
-              currentAi.url === service.url
+              aiService.url === service.url
                 ? "border-green-500 bg-neutral-800"
                 : "border-neutral-700 hover:border-neutral-600"
             }`}
@@ -29,27 +29,31 @@ export function AISelector() {
               className="w-8 h-8 mb-2"
             />
             <span className="text-white text-[18px]">{service.name}</span>
-            {currentAi.url === service.url && (
+            {aiService.url === service.url && (
               <div className="absolute inset-0 border border-green-500/30 rounded-lg animate-pulse" />
             )}
           </button>
         ))}
       </div>
 
-      {/* ChatGPT Plus Option */}
-      {currentAi.name === AI_SERVICES[AiServiceType.CHATGPT].name && (
+      {/* Show Premium Selection Option */}
+      {[
+          AI_SERVICES[AiServiceId.CHATGPT].name,
+          AI_SERVICES[AiServiceId.CLAUDE].name,
+          AI_SERVICES[AiServiceId.GEMINI].name,
+        ].includes(aiService.name) && (
         <div className="mt-8 space-y-2">
           <label className="flex items-center space-x-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={isPremiumUser}
-              onChange={(e) => setIsProUser(e.target.checked)}
+              checked={premiumServices[aiService.id]}
+              onChange={(e) => setIsProUser({ [aiService.id]: e.target.checked })}
               className="w-4 h-4 rounded cursor-pointer"
             />
-            <span className="text-white text-base">ChatGPT Plus User</span>
+            <span className="text-white text-base">{aiService.name} Plus User</span>
           </label>
           <p className="text-neutral-400 text-sm">
-            ChatGPT has a character limit on the free tier.
+            {aiService.name} has a character limit on the free tier.
             <br />
             For longer content, the extension strategically samples the text to
             preserve the context and meaning.
