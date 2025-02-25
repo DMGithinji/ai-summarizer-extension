@@ -35,37 +35,41 @@ export async function pasteToEditor(
       throw new Error("Editor not found");
     }
 
-    // Uses TextArea Element
-    if ((service === AiServiceType.GROK, AiServiceType.DEEPSEEK)) {
-      const textareaEditor = editor as HTMLTextAreaElement;
-      textareaEditor.value = text;
-      clickSubmit(textareaEditor);
-    }
-
-    // Uses Quill Rich Text Editor
-    if ([AiServiceType.GEMINI].includes(service)) {
-      editor.textContent = text;
-      clickSubmit(editor);
-      const sendButton = document.querySelector('button[data-testid="send-button"]');
-      if (sendButton) {
-        (sendButton as HTMLButtonElement).click();
-        return;
+    switch (service) {
+      case AiServiceType.GROK:
+      case AiServiceType.DEEPSEEK: {
+        // These use TextArea Element
+        const textareaEditor = editor as HTMLTextAreaElement;
+        textareaEditor.value = text;
+        clickSubmit(textareaEditor);
+        break;
       }
-      return;
+      case AiServiceType.GEMINI: {
+        editor.textContent = text;
+        clickSubmit(editor);
+        const sendButton = document.querySelector(
+          'button[data-testid="send-button"]'
+        );
+        if (sendButton) {
+          (sendButton as HTMLButtonElement).click();
+        }
+        break;
+      }
+      case AiServiceType.CLAUDE:
+      case AiServiceType.CHATGPT: {
+        // Clear any previous text
+        const placeholder = editor.querySelector("p.is-empty");
+        if (placeholder) {
+          editor.innerHTML = "";
+        }
+        // Create and insert content
+        const paragraph = document.createElement("p");
+        paragraph.textContent = text;
+        editor.appendChild(paragraph);
+        clickSubmit(editor);
+        break;
+      }
     }
-
-    // Handle Claude/ChatGPT ProseMirror editors
-    // Clear any placeholder text
-    const placeholder = editor.querySelector("p.is-empty");
-    if (placeholder) {
-      editor.innerHTML = "";
-    }
-
-    // Create and insert content
-    const paragraph = document.createElement("p");
-    paragraph.textContent = text;
-    editor.appendChild(paragraph);
-    clickSubmit(editor);
   } catch (error) {
     console.error("Paste error:", error);
     throw new Error("Paste error");

@@ -49,20 +49,20 @@ export function extractChapters(description: string): string {
 
   // Common patterns for chapter formats
   const patterns = [
-    // Pattern 1: "00:00 Chapter Title" or "00:00:00 Chapter Title"
-    /^(?:\d{1,2}:)?\d{2}:\d{2}\s+.+$/gm,
+    // Pattern 1: "0:00 Chapter Title" or "00:00:00 Chapter Title"
+    /^(?:\d{1,2}:)?\d{1,2}:\d{2}\s+.+$/gm,
 
-    // Pattern 2: "(00:00) Chapter Title" or "(00:00:00) Chapter Title"
-    /^\((?:\d{1,2}:)?\d{2}:\d{2}\)\s+.+$/gm,
+    // Pattern 2: "(0:00) Chapter Title" or "(00:00:00) Chapter Title"
+    /^\((?:\d{1,2}:)?\d{1,2}:\d{2}\)\s+.+$/gm,
 
-    // Pattern 3: "[00:00] Chapter Title" or "[00:00:00] Chapter Title"
-    /^\[(?:\d{1,2}:)?\d{2}:\d{2}\]\s+.+$/gm,
+    // Pattern 3: "[0:00] Chapter Title" or "[00:00:00] Chapter Title"
+    /^\[(?:\d{1,2}:)?\d{1,2}:\d{2}\]\s+.+$/gm,
 
-    // Pattern for timestamps like "00:00 - " or "00:00:00 - "
-    /^\d{2}:\d{2}(?::\d{2})?\s*-\s*.+$/gm,
+    // Pattern for timestamps like "0:00 - " or "00:00:00 - "
+    /^\d{1,2}:\d{2}(?::\d{2})?\s*-\s*.+$/gm,
 
     // Alternative pattern that's more flexible with the separator
-    /^\d{2}:\d{2}(?::\d{2})?\s*[-:]\s*.+$/gm
+    /^\d{1,2}:\d{2}(?::\d{2})?\s*[-:]\s*.+$/gm
   ];
 
   // Try each pattern until we find matches
@@ -112,7 +112,7 @@ export function extractChapters(description: string): string {
   return formatChapters(sortedChapters);
 }
 
-export function formatChapters(chapters: Chapter[]): string {
+function formatChapters(chapters: Chapter[]): string {
   let output = '';
 
   chapters.forEach((chapter, index) => {
