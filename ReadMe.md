@@ -3,7 +3,7 @@
 A browser extension that helps you summarize web content and YouTube videos using your existing AI accounts (ChatGPT, Claude, Gemini, Deepseek, Grok).
 
 Install the extension from [chrome web store](https://chromewebstore.google.com/detail/justtldr-free-ai-summariz/cmnjpgpkkdmkkmpliipnmhbelgbiefpa)
-or download latest version: [v2025.02.20](https://github.com/DMGithinji/ai-summarizer-extension/releases/tag/v2025.02.20)
+or download latest version: [v2025.03.03](https://github.com/DMGithinji/ai-summarizer-extension/releases/tag/v2025.03.03)
 
 ## Features
 
