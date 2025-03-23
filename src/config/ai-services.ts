@@ -14,7 +14,7 @@ export const AI_SERVICES: Record<AiServiceId, AiService> = {
     name: 'Claude',
     url: 'https://claude.ai/new',
     icon: '/assets/icons/claude-logo.svg',
-    characterLimit: 50000,
+    characterLimit: 20000,
     premiumCharacterLimit: 250000
   },
   [AiServiceId.DEEPSEEK]: {
@@ -38,7 +38,7 @@ export const AI_SERVICES: Record<AiServiceId, AiService> = {
     name: 'Grok',
     url: 'https://grok.com',
     icon: '/assets/icons/grok-logo.png',
-    characterLimit: 250000,
-    premiumCharacterLimit: 250000
+    characterLimit: 100000,
+    premiumCharacterLimit: 200000
   },
 };
