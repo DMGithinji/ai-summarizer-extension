@@ -77,4 +77,7 @@ chrome.runtime.onInstalled.addListener((details) => {
     const thisVersion = chrome.runtime.getManifest().version;
     console.log("Updated from", details.previousVersion, "to", thisVersion);
   }
+  if (details.reason === "install" || details.reason === "update") {
+    chrome.runtime.setUninstallURL("https://justtldr.com/please-stay");
+  }
 });
