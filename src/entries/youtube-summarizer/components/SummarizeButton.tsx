@@ -1,14 +1,16 @@
 import { AI_SERVICES } from '@/config/ai-services';
 import { useStorage } from '@/hooks/useStorage';
-import { ChevronDown, Sparkles, Check } from "lucide-react";
+import { ChevronDown, Sparkles, Check, Ban } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const AiSelectButton = ({
   disabled,
-  onSummarize
+  onSummarize,
+  noTranscript,
 }: {
   disabled: boolean,
-  onSummarize: (e: React.MouseEvent) => Promise<void>
+  onSummarize: (e: React.MouseEvent) => Promise<void>,
+  noTranscript?: boolean
 }) => {
   const { aiService, setAiService } = useStorage();
   const [isOpen, setIsOpen] = useState(false);
@@ -31,12 +33,14 @@ const AiSelectButton = ({
       <div className="inline-flex h-11 items-stretch rounded-md hover:bg-neutral-800/50 font-medium transition-colors">
         {/* Main Button Section */}
         <button
-          title={`Summarize with ${aiService?.name}`}
+          title={noTranscript ? 'No transcript found' : `Summarize with ${aiService?.name}`}
           onClick={onSummarize}
-          disabled={disabled}
+          disabled={disabled || noTranscript}
           className="flex gap-3 items-center px-4 text-neutral-100 hover:text-white transition-colors text-[14px] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Sparkles className="h-[16px] w-[16px]" />
+          {
+            noTranscript ? <Ban size={16} /> : <Sparkles size={16} />
+          }
           <span>Summarize</span>
         </button>
 
@@ -71,9 +75,9 @@ const AiSelectButton = ({
                 setAiService(ai.id);
                 setIsOpen(false);
               }}
-              className="relative flex w-full items-center px-3 py-2.5 text-md text-white hover:bg-neutral-800 transition-colors z-[9999]"
+              className="relative flex w-full items-center px-3 py-3 text-md text-white hover:bg-neutral-800 transition-colors z-[9999]"
             >
-              <span className="pl-4 text-[12px] font-normal">{ai.name}</span>
+              <span className="pl-4 text-[14px] font-normal">{ai.name}</span>
               {ai.url === aiService.url && (
                 <span className="absolute right-4 text-green-500">
                   <Check className="h-6 w-6" />
