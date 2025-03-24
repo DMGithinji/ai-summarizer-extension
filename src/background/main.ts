@@ -81,3 +81,27 @@ chrome.runtime.onInstalled.addListener((details) => {
     chrome.runtime.setUninstallURL("https://justtldr.com/please-stay");
   }
 });
+
+chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
+  if (message.type === 'SUBMIT_FEEDBACK') {
+    fetch("https://feedback-to-sheets.onrender.com/feedback/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message.payload)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Feedback submission failed');
+      }
+      sendResponse({ status: 'success' });
+    })
+    .catch(error => {
+      console.error("Feedback submission error:", error);
+      sendResponse({ status: 'error', error: error.message });
+    });
+
+    return true;
+  }
+});

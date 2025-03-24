@@ -105,7 +105,7 @@ export function PromptSelector() {
   return (
     <div className="mt-10">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">Prompt Templates</h1>
+        <h1 className="text-xl font-bold text-white">Prompt Templates</h1>
         <button
           onClick={() => {
             setNewPrompt(true);
@@ -128,7 +128,7 @@ export function PromptSelector() {
         {newPrompt && (
           <AccordionItem value="new" data-open>
             <AccordionTrigger className="text-lg font-medium flex justify-between items-center py-3 px-4 bg-neutral-800 rounded-md border border-neutral-700 hover:bg-neutral-700 transition">
-              <span className="text-white">New Prompt</span>
+              <span className="text-white text-base">New Prompt</span>
             </AccordionTrigger>
             <AccordionContent className="mt-1 py-3 px-2 bg-neutral-800 rounded-md shadow-md">
               <PromptForm
@@ -158,7 +158,7 @@ export function PromptSelector() {
                     <Circle className="h-5 w-5 cursor-pointer text-neutral-300" />
                   )}
                 </button>
-                <span className="text-white">{prompt.name}</span>
+                <span className="text-white text-base">{prompt.name}</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="mt-1 py-3 px-2 bg-neutral-800 rounded-md  shadow-md">

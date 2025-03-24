@@ -15,7 +15,7 @@ export function ManageExcludedSites() {
 
   return (
     <div className="mt-12">
-      <h1 className="text-2xl font-bold text-white">Excluded Sites</h1>
+      <h1 className="text-xl font-bold text-white">Excluded Sites</h1>
 
       <Accordion
         type="single"
@@ -28,7 +28,7 @@ export function ManageExcludedSites() {
           <AccordionTrigger className="py-3 px-4 bg-neutral-800 rounded-md border border-neutral-700 hover:bg-neutral-700 transition">
             <div className="flex items-center space-x-2">
               <Globe className="h-5 w-5" />
-              <span className="text-lg text-white">
+              <span className="text-base text-white">
                 Configure sites you don't want to see the "Summarize with AI Button"
               </span>
             </div>
