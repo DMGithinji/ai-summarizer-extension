@@ -7,7 +7,7 @@ export function AISelector() {
 
   return (
     <div className="space-y-4 w-full">
-      <h1 className="text-2xl font-bold text-white">Configure AI Summary</h1>
+      <h1 className="text-xl font-bold text-white">Configure AI Summary</h1>
       <p className="text-neutral-400 text-lg">
         Select which AI service to use for getting summaries.
       </p>
@@ -28,7 +28,7 @@ export function AISelector() {
               alt={service.name}
               className="w-8 h-8 mb-2"
             />
-            <span className="text-white text-[18px]">{service.name}</span>
+            <span className="text-white text-base">{service.name}</span>
             {aiService.url === service.url && (
               <div className="absolute inset-0 border border-green-500/30 rounded-lg animate-pulse" />
             )}
