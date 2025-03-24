@@ -24,12 +24,14 @@ export const TranscriptTab = ({
   transcript,
   generateSummary,
   retrieveTranscript,
+  noTranscript
 }: {
   error: string | null;
   isLoading: boolean;
-  transcript: TranscriptSegment[] | null;
+  transcript: TranscriptSegment[];
   generateSummary: (e?: React.MouseEvent) => Promise<void>;
   retrieveTranscript: () => Promise<VideoInfo | null>;
+  noTranscript?: boolean
 }) => {
   const accordionContentRef = useRef<HTMLDivElement>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
@@ -181,6 +183,7 @@ export const TranscriptTab = ({
                 <AiSelectButton
                   disabled={isLoading}
                   onSummarize={generateSummary}
+                  noTranscript={noTranscript}
                 />
                 {isOpen ? (
                   <button
@@ -234,7 +237,7 @@ export const TranscriptTab = ({
                 </div>
               ) : error ? (
                 <div className="text-center py-8 text-red-400">{error}</div>
-              ) : transcript ? (
+              ) : transcript?.length > 0 ? (
                 <div
                   ref={transcriptRef}
                   className="text-md text-gray-200 space-y-4"
@@ -259,7 +262,7 @@ export const TranscriptTab = ({
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-400">
+                <div className="text-center py-8 text-lg text-gray-400">
                   No transcript retrieved for this video
                 </div>
               )}

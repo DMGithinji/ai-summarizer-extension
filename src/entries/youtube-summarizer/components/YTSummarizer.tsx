@@ -15,6 +15,7 @@ export function YTSummarizer({
   displayMode: "tab" | "floating";
 }) {
   const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null)
+  const [noTranscript, setNoTranscript] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,9 +30,10 @@ export function YTSummarizer({
       setVideoInfo(videoData);
       return videoData;
     } catch (err) {
-      const errorMessage = "Failed to fetch transcript. Please try again.";
+      const errorMessage = "Failed to fetch transcript.";
       setError(errorMessage);
       console.error("Transcript error:", err);
+      alert(errorMessage);
       return null;
     } finally {
       setIsLoading(false);
@@ -42,7 +44,10 @@ export function YTSummarizer({
     async (e?: React.MouseEvent) => {
       e?.stopPropagation();
       const videoData = await retrieveTranscript();
-      if (!videoData?.transcript) return;
+      if (!videoData?.transcript) {
+        setNoTranscript(true);
+        return
+      }
 
       try {
         const { url, characterLimit } = await getSummaryServiceData();
@@ -94,9 +99,10 @@ export function YTSummarizer({
     <TranscriptTab
       error={error}
       isLoading={isLoading}
-      transcript={videoInfo?.transcript || []}
+      transcript={videoInfo?.transcript || [] }
       generateSummary={generateSummary}
       retrieveTranscript={retrieveTranscript}
+      noTranscript={noTranscript}
     />
   );
 }
