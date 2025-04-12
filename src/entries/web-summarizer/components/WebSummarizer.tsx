@@ -24,8 +24,10 @@ export function WebSummarizer() {
       const capturedText = await captureText();
 
       const disclaimer = 'End with a brief disclaimer that the output given is a summary of the content and doesn’t cover every detail or nuance. Add sth along the lines of "To get more insights, ask follow up questions or read full article."'
+      const outputLangInstruction =
+          "VERY VERY IMPORTANT: Your output should only be in the primary language of the content. If content is primarily in English, output in English. If content is primarily in Arabic, output in Arabic etc. Do not output in any other language.";
       const content = characterLimit ? fitTextToContextLimit(capturedText) : capturedText;
-      const pasteContent = `${defaultPrompt.content}${disclaimer}\n\nContent: ${content}`
+      const pasteContent = `${defaultPrompt.content}\n${disclaimer}\n${outputLangInstruction}\n\nContent: "${content}"`
       const processedPrompt = characterLimit ? fitTextToContextLimit(pasteContent, { characterLimit }) : `${pasteContent}`
 
       await chrome.runtime.sendMessage({

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "justTLDR: Free AI Summarizer for YouTube and Web",
-  "version": "2.0.14",
+  "version": "2.0.15",
   "description": "Instantly summarize webpages or YouTube video using your existing AI accounts (ChatGPT, etc) - no additional subscription required!",
   "permissions": ["activeTab", "storage"],
   "host_permissions": [
