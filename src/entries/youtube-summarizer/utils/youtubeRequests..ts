@@ -25,7 +25,7 @@ export const getYoutubeHtml = async (videoId: string) => {
   }
 
   return await response.text();
-}
+};
 
 export const getTranscript = async (youtubeHtml: string) => {
   const isMobileYouTube = window.location.hostname === "m.youtube.com";
@@ -33,11 +33,24 @@ export const getTranscript = async (youtubeHtml: string) => {
     ? "https://m.youtube.com"
     : "https://www.youtube.com";
 
-  const transcriptLinkPattern =
-    /(?:https:\/\/(?:www|m)\.youtube\.com)?\/api\/timedtext\?[^"']+lang=en[^"']*/;
-  const match = youtubeHtml.match(transcriptLinkPattern);
+  // get default browser language transcript
+  const browserLanguage = navigator.language;
 
-  if (!match) return null;
+  const preferredLangs = [browserLanguage, 'en', null];
+  let match = null;
+
+  for (const lang of preferredLangs) {
+    const pattern = lang
+      ? new RegExp(`(?:https:\/\/(?:www|m)\\.youtube\\.com)?\/api\/timedtext\\?[^"']+lang=${lang}[^"']*`)
+      : /(?:https:\/\/(?:www|m)\.youtube\.com)?\/api\/timedtext\?[^"']+lang=[a-z-]+[^"']*/i;
+
+    match = youtubeHtml.match(pattern);
+    if (match) break;
+  }
+
+  if (!match) {
+    return null;
+  }
 
   let transcriptUrl = match[0];
 
@@ -53,7 +66,7 @@ export const getTranscript = async (youtubeHtml: string) => {
   const transcript = resegmentTranscript(transcriptSegments);
 
   return transcript;
-}
+};
 
 async function fetchXMLTranscript(
   normalizedTranscriptUrl: string,

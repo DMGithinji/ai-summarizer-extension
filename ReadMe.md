@@ -9,13 +9,14 @@ or download latest version: [v2025.03.25](https://github.com/DMGithinji/ai-summa
 
 - 🌐 **Web Content Summarization**: Summarize any webpage with one click
 - 🎥 **YouTube Integration**: Get quick summaries of YouTube video transcripts
+- 🎥 **Multi-language Support**: Works with articles and  youtube videos in multiple languages (English, Arabic, etc)
 - 🤖 **Multiple AI Services**: Works with:
   - OpenAI's ChatGPT
   - Anthropic's Claude
   - DeepSeek's DeepSeek
   - Google's Gemini
   - xAI's Grok
-- ✨ **Adapts to free tier AI limits**: ChatGPT Free tier has character limit that extension navigates
+- ✨ **Adapts to free tier AI limits**: The extension strategically samples the text to fit within the AI's character limit if it's exceeded
 - 🎯 **Non-intrusive UI**: Extension attempts to be unobtrusive and adapts to Youtube's design
 
 ## How to Use
