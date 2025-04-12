@@ -1,3 +1,4 @@
+import { AiServiceId } from "@/config/types";
 import { getAIChatBot, pasteToEditor } from "./utils";
 
 interface PasteMessage {
@@ -21,6 +22,6 @@ chrome.runtime.onMessage.addListener((message: PasteMessage) => {
         throw new Error("No text found for transfer");
       }
       await pasteToEditor(chatbot, prompt.text);
-    }, 500);
+    }, chatbot === AiServiceId.GROK ? 1500 : 500);
   }
 });

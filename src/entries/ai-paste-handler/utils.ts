@@ -72,7 +72,7 @@ export async function pasteToEditor(
     }
   } catch (error) {
     console.error("Paste error:", error);
-    throw new Error("Paste error");
+    alert("Oops! We encountered a small hiccup while trying to paste your text. Could you please try once more?");
   }
 }
 
