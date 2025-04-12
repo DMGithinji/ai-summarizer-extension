@@ -6,7 +6,7 @@ export const AI_SERVICES: Record<AiServiceId, AiService> = {
     name: 'ChatGPT',
     url: 'https://chatgpt.com',
     icon: '/assets/icons/chatgpt-logo.png',
-    characterLimit: 20000,
+    characterLimit: 15000,
     premiumCharacterLimit: 200000
   },
   [AiServiceId.CLAUDE]: {
