@@ -25,7 +25,7 @@ export const getYoutubeHtml = async (videoId: string) => {
   }
 
   return await response.text();
-}
+};
 
 export const getTranscript = async (youtubeHtml: string) => {
   const isMobileYouTube = window.location.hostname === "m.youtube.com";
@@ -34,7 +34,7 @@ export const getTranscript = async (youtubeHtml: string) => {
     : "https://www.youtube.com";
 
   const transcriptLinkPattern =
-    /(?:https:\/\/(?:www|m)\.youtube\.com)?\/api\/timedtext\?[^"']+lang=en[^"']*/;
+    /(?:https:\/\/(?:www|m)\.youtube\.com)?\/api\/timedtext\?[^"']+lang=[a-z-]+[^"']*/i;
   const match = youtubeHtml.match(transcriptLinkPattern);
 
   if (!match) return null;
@@ -53,7 +53,7 @@ export const getTranscript = async (youtubeHtml: string) => {
   const transcript = resegmentTranscript(transcriptSegments);
 
   return transcript;
-}
+};
 
 async function fetchXMLTranscript(
   normalizedTranscriptUrl: string,
