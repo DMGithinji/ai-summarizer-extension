@@ -5,6 +5,8 @@ A browser extension that helps you summarize web content and YouTube videos usin
 Install the extension from [chrome web store](https://chromewebstore.google.com/detail/justtldr-free-ai-summariz/cmnjpgpkkdmkkmpliipnmhbelgbiefpa)
 or download latest version: [v2025.05.05](https://github.com/DMGithinji/ai-summarizer-extension/releases/tag/v2025.05.05)
 
+For detailed documentation of the codebase, checkout: [https://deepwiki.com/DMGithinji/ai-summarizer-extension](https://deepwiki.com/DMGithinji/ai-summarizer-extension)
+
 ## Features
 
 - 🌐 **Web Content Summarization**: Summarize any webpage with one click
