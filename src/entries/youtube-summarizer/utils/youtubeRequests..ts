@@ -9,7 +9,7 @@ export const getYoutubeHtml = async (videoId: string) => {
 
   const response = await fetch(videoUrl, {
     mode: "same-origin",
-    credentials: "include",
+    credentials: "omit",
     headers: {
       Accept: "*/*",
       "Accept-Language": "en-US,en;q=0.5",
@@ -75,10 +75,9 @@ async function fetchXMLTranscript(
   try {
     const transcriptResponse = await fetch(normalizedTranscriptUrl, {
       mode: "same-origin",
-      credentials: "include",
+      credentials: "omit",
       headers: {
         Accept: "*/*",
-        "Accept-Language": "en-US,en;q=0.5",
         ...(includeAgent && {
           "User-Agent": navigator.userAgent,
           "X-Requested-With": "XMLHttpRequest",

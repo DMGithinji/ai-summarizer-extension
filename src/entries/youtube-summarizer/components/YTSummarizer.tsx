@@ -73,7 +73,7 @@ export function YTSummarizer({
         const disclaimer =
           'End with a brief disclaimer that the output given is a summary of the youtube video and doesn’t cover every detail or nuance.\nAdd sth along the lines of "To get more insights, ask follow up questions or watch full video."';
         const outputLangInstruction =
-          "VERY VERY IMPORTANT: Your output should only be in the primary language of the transcript. If transcript is primarily in English, output in English. If transcript is primarily in Arabic, output in Arabic etc. Do not output in any other language.";
+          "VERY VERY IMPORTANT: YOUR OUTPUT SHOULD ONLY BE IN THE PRIMARY LANGUAGE OF THE TRANSCRIPT.";
         const transcriptWithPrompt = `First, carefully analyze the following transcript. Then: ${prompt}\n${disclaimer}\n${outputLangInstruction}\n\n${title}\n${chapters}Transcript: "${transcriptString}"`;
         const textToSummarize =
           characterLimit && transcriptString.length > characterLimit
