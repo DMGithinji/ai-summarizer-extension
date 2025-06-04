@@ -1,4 +1,5 @@
 import { TranscriptSegment } from "@/config/types";
+import { extractBasicInfo, VideoBasicInfo } from "./metadataExtractor";
 
 export const getYoutubeHtml = async (videoId: string) => {
   const isMobileYouTube = window.location.hostname === "m.youtube.com";
@@ -27,7 +28,64 @@ export const getYoutubeHtml = async (videoId: string) => {
   return await response.text();
 };
 
-export const getTranscript = async (youtubeHtml: string) => {
+export const getTranscript = async (
+  videoId: string,
+  maxTranscriptAttempts: number = 5
+) => {
+  let transcript = null;
+  let basicInfo = {
+    title: "",
+    chapters: "",
+  } as VideoBasicInfo;
+
+  for (let attempt = 1; attempt <= maxTranscriptAttempts; attempt++) {
+    try {
+      console.log(
+        `Attempting to get transcript (attempt ${attempt}/${maxTranscriptAttempts})`
+      );
+      const youtubeHtml = await getYoutubeHtml(videoId);
+      basicInfo = extractBasicInfo(youtubeHtml);
+      transcript = await attemptGetTranscript(youtubeHtml);
+
+      // Check if transcript is valid (not null/undefined and has content)
+      if (transcript && transcript.length > 0) {
+        console.log(`Successfully got transcript on attempt ${attempt}`);
+        return {
+          ...basicInfo,
+          transcript,
+        };
+      } else {
+        console.log(
+          `Transcript attempt ${attempt} returned empty/null transcript`
+        );
+        if (attempt === maxTranscriptAttempts) {
+          console.log(
+            `All ${maxTranscriptAttempts} transcript attempts failed, proceeding without transcript`
+          );
+          break;
+        }
+      }
+    } catch (error) {
+      console.log(`Transcript attempt ${attempt} failed with error:`, error);
+      if (attempt === maxTranscriptAttempts) {
+        console.log(
+          `All ${maxTranscriptAttempts} transcript attempts failed, proceeding without transcript`
+        );
+        break;
+      }
+    }
+
+    // Wait before retrying (exponential backoff)
+    const delay = Math.min(1000 * Math.pow(2, attempt - 1), 2000); // Cap at 2 seconds
+    await new Promise((resolve) => setTimeout(resolve, delay));
+  }
+
+  throw new Error(
+    "Sometimes transcript retrieval fails and requires multiple attempts."
+  );
+};
+
+export const attemptGetTranscript = async (youtubeHtml: string) => {
   const isMobileYouTube = window.location.hostname === "m.youtube.com";
   const baseUrl = isMobileYouTube
     ? "https://m.youtube.com"
@@ -36,12 +94,14 @@ export const getTranscript = async (youtubeHtml: string) => {
   // get default browser language transcript
   const browserLanguage = navigator.language;
 
-  const preferredLangs = [browserLanguage, 'en', null];
+  const preferredLangs = [browserLanguage, "en", null];
   let match = null;
 
   for (const lang of preferredLangs) {
     const pattern = lang
-      ? new RegExp(`(?:https:\/\/(?:www|m)\\.youtube\\.com)?\/api\/timedtext\\?[^"']+lang=${lang}[^"']*`)
+      ? new RegExp(
+          `(?:https:\/\/(?:www|m)\\.youtube\\.com)?\/api\/timedtext\\?[^"']+lang=${lang}[^"']*`
+        )
       : /(?:https:\/\/(?:www|m)\.youtube\.com)?\/api\/timedtext\?[^"']+lang=[a-z-]+[^"']*/i;
 
     match = youtubeHtml.match(pattern);

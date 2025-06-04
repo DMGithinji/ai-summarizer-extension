@@ -1,16 +1,10 @@
-import { getTranscript, getYoutubeHtml } from "./youtubeRequests.";
-import { extractBasicInfo } from "./metadataExtractor";
+import { getTranscript } from "./youtubeRequests.";
 
 export const getVideoInfo = async () => {
   const url = window.location.href;
   const videoId = getYoutubeVideoId(url);
-  const youtubeHtml = await getYoutubeHtml(videoId)
-  const basicInfo = extractBasicInfo(youtubeHtml);
-  const transcript = await getTranscript(youtubeHtml);
-  return {
-    ...basicInfo,
-    transcript
-  }
+
+  return await getTranscript(videoId);
 }
 
 function getYoutubeVideoId(url: string) {

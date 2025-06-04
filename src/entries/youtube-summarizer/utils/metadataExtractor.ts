@@ -1,9 +1,9 @@
-interface VideoBasicInfo {
+export interface VideoBasicInfo {
   title: string;
   chapters: string;
 }
 
-interface Chapter {
+export interface Chapter {
   timestamp: string;
   title: string;
   seconds: number;

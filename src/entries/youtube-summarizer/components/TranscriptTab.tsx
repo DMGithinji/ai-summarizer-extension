@@ -35,6 +35,8 @@ export const TranscriptTab = ({
 }) => {
   const accordionContentRef = useRef<HTMLDivElement>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const getVideoTitle = () =>
@@ -74,12 +76,18 @@ export const TranscriptTab = ({
         const adjustedHeight = height - 60;
         accordionContentRef.current.style.maxHeight = `${adjustedHeight}px`;
       }
-      if (value === "transcript") {
+      if (value === "transcript" && !error) {
         await retrieveTranscript();
       }
     },
-    [retrieveTranscript]
+    [error, retrieveTranscript]
   );
+
+  useEffect(() => {
+    if (!!error && !isOpen && triggerRef.current) {
+      triggerRef.current?.click();
+    }
+  }, [error, isOpen, handleAccordionChange]);
 
   const copyTranscript = useCallback(
     async (e?: React.MouseEvent) => {
@@ -170,7 +178,7 @@ export const TranscriptTab = ({
           value="transcript"
           className="border-0 bg-neutral-800/60 rounded-[8px] overflow-hidden w-full"
         >
-          <AccordionTrigger className="py-1 pl-1">
+          <AccordionTrigger ref={triggerRef} className="py-1 pl-1">
             <div className="flex  items-center justify-between w-full px-4 h-14">
               <div className="flex items-center gap-3">
                 <ScrollText className="text-white h-[18px] w-[18px]" />
@@ -181,7 +189,7 @@ export const TranscriptTab = ({
 
               <div className="flex items-center gap-3">
                 <AiSelectButton
-                  disabled={isLoading}
+                  loading={isLoading}
                   onSummarize={generateSummary}
                   noTranscript={noTranscript}
                 />
@@ -220,9 +228,8 @@ export const TranscriptTab = ({
                 )}
                 <div className="text-gray-300">
                   <ChevronDown
-                    className={`h-8 w-8 transition-transform duration-200 ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
+                    className={`h-8 w-8 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </div>
               </div>
@@ -236,7 +243,12 @@ export const TranscriptTab = ({
                   <Spinner size="lg" />
                 </div>
               ) : error ? (
-                <div className="text-center py-8 text-red-400">{error}</div>
+                <div className="flex flex-col justify-center py-3">
+                  <p className="text-center text-lg text-red-400 px-4">{error}</p>
+                  <div className="pt-4 flex justify-center">
+                    <button className="text-lg p-2 text-orange-400 hover:text-orange-500 rounded-full transition-colors shadow" onClick={retrieveTranscript}>Try again</button>
+                  </div>
+                </div>
               ) : transcript?.length > 0 ? (
                 <div
                   ref={transcriptRef}
@@ -262,8 +274,8 @@ export const TranscriptTab = ({
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-lg text-gray-400">
-                  No transcript retrieved for this video
+                <div className="flex flex-col justify-center py-3">
+                  <p className="text-center text-lg text-red-400 px-4">Oops! Something went wrong.<br />Please reload and try again or report the issue.</p>
                 </div>
               )}
             </div>

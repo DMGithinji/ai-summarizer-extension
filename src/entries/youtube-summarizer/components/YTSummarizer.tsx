@@ -23,7 +23,7 @@ export function YTSummarizer({
   const [error, setError] = useState<string | null>(null);
 
   const retrieveTranscript = useCallback(async () => {
-    if (videoInfo || isLoading) return videoInfo;
+    if (videoInfo?.transcript?.length) return videoInfo;
 
     setIsLoading(true);
     setError(null);
@@ -32,22 +32,22 @@ export function YTSummarizer({
       const videoData = await getVideoInfo();
       setVideoInfo(videoData);
       return videoData;
-    } catch (err) {
-      const errorMessage = "Failed to fetch transcript.";
+    } catch (err: any) {
+      const errorMessage = err?.message || "Failed to fetch transcript.";
       setError(errorMessage);
-      console.error("Transcript error:", err);
-      alert(errorMessage);
+      console.error(err);
       return null;
     } finally {
       setIsLoading(false);
     }
-  }, [videoInfo, isLoading]);
+  }, [videoInfo]);
 
   const generateSummary = useCallback(
     async (e?: React.MouseEvent) => {
       e?.stopPropagation();
       const videoData = await retrieveTranscript();
-      if (!videoData?.transcript) {
+      console.log({videoData});
+      if (!videoData?.transcript?.length) {
         setNoTranscript(true);
         return;
       }
@@ -73,7 +73,7 @@ export function YTSummarizer({
         const disclaimer =
           'End with a brief disclaimer that the output given is a summary of the youtube video and doesn’t cover every detail or nuance.\nAdd sth along the lines of "To get more insights, ask follow up questions or watch full video."';
         const outputLangInstruction =
-          "VERY VERY IMPORTANT: YOUR OUTPUT SHOULD ONLY BE IN THE PRIMARY LANGUAGE OF THE TRANSCRIPT.";
+          "IMPORTANT: Check the language of the transcript and make sure your output is in the same language. If transcript is in English, output in English. If transcript is in Arabic, output in Arabic etc. Do not output in any other language.";
         const transcriptWithPrompt = `First, carefully analyze the following transcript. Then: ${prompt}\n${disclaimer}\n${outputLangInstruction}\n\n${title}\n${chapters}Transcript: "${transcriptString}"`;
         const textToSummarize =
           characterLimit && transcriptString.length > characterLimit
